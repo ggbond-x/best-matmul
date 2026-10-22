@@ -87,14 +87,14 @@ fi
 # 计划和真正编译使用相同路径/参数。共 15 个 benchmark + 15 个校验程序。
 build_args=(--cutlass "$CUTLASS_PATH" --nvcc "$NVCC_PATH"
   --suite all --with-validation --output-dir "$BUILD_DIR")
-run_step build_plan bash build.sh "${build_args[@]}" --dry-run
-run_step build bash build.sh "${build_args[@]}"
+# run_step build_plan bash build.sh "${build_args[@]}" --dry-run
+# run_step build bash build.sh "${build_args[@]}"
 
-# 在耗时的 GPU 分析前归档；后续重编译不会覆盖本次材料。
-# 只打包明确列出的源码，不把 reports/build 递归装入源码包。
-run_step archive_build cp -a -- "$BUILD_DIR" "$EXP_DIR/build_artifacts"
-run_step archive_source tar -czf "$EXP_DIR/source.tar.gz" \
-  benchmark_host.cu host kernels tests build.sh build_benchmark.sh run.sh test.sh README.md H100_BENCHMARK.md
+# # 在耗时的 GPU 分析前归档；后续重编译不会覆盖本次材料。
+# # 只打包明确列出的源码，不把 reports/build 递归装入源码包。
+# run_step archive_build cp -a -- "$BUILD_DIR" "$EXP_DIR/build_artifacts"
+# run_step archive_source tar -czf "$EXP_DIR/source.tar.gz" \
+#   benchmark_host.cu host kernels tests build.sh build_benchmark.sh run.sh test.sh README.md H100_BENCHMARK.md
 
 run_step environment bash run.sh --mode env --build-dir "$BUILD_DIR" --gpu "$GPU" \
   --output-dir "$EXP_DIR/env"
