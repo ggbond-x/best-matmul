@@ -1,0 +1,27 @@
+diff --git a/include/cute/atom/mma_atom.hpp b/include/cute/atom/mma_atom.hpp
+--- a/include/cute/atom/mma_atom.hpp
++++ b/include/cute/atom/mma_atom.hpp
+@@ -529,6 +529,23 @@
+ // These tile the MMA_Atom as a whole
+ //
+ 
++template <class MMA_Op,
++          class MMAThrLayout = Layout<Shape<_1,_1,_1>>,
++          class Permutations = Tile<Underscore,Underscore,Underscore>>
++CUTE_HOST_DEVICE constexpr
++auto
++make_tiled_mma(MMA_Atom<MMA_Op> const& mma_atom,
++               MMAThrLayout     const& thr_layout   = {},
++               Permutations     const& permutations = {})
++{
++  auto thr_layout_mnk  = append<3>(thr_layout, Layout<_1,_0>{});
++  auto permutation_mnk = append<3>(permutations, _);
++
++  return TiledMMA<MMA_Atom<MMA_Op>,
++                  decltype(thr_layout_mnk),
++                  decltype(permutation_mnk)>{mma_atom, thr_layout_mnk};
++}
++
+ template <class MMA_Op,
+           class MMAThrLayout = Layout<Shape<_1,_1,_1>>,
+           class Permutations = Tile<Underscore,Underscore,Underscore>>
