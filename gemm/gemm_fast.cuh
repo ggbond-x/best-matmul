@@ -1,9 +1,10 @@
 #pragma once
 
 // fast：thread 0..127 是 producer warpgroup，其中只有 thread 0 提交 TMA。
-// thread 128..383 是两个计算 warpgroup，沿 CTA 的 M 维各算一半。
-// empty 屏障的到达计数等于计算线程数（256），不包括 producer。
-// 主循环结束后 producer 要排空每个用过的槽位；最后一批 WGMMA 必须再 arrive 一次 empty。
+// 计算线程从 128 开始，个数是 WGMMA_COMPUTE_THREADS（默认 256，沿 M 维分工）。
+// empty 屏障的到达计数等于计算线程数，不包括 producer。
+// 主循环结束后 producer 要排空每个用过的槽位。
+// inflight=2 时，最后一批在 wait<0> 之后再 arrive 一次 empty；inflight=1 每个 tile 已经到达过。
 #include "config.cuh"
 #include "epilogue.cuh"
 #include "smem_tma.cuh"
@@ -18,8 +19,10 @@ inline constexpr int kComputeThreads = kWarpgroupThreads * kComputeWarpgroups;
 inline constexpr int kCtaThreads = kProducerThreads + kComputeThreads;
 
 static_assert(kProducerThreads == 128, "fast reserves one producer warpgroup");
-static_assert(kComputeThreads == 256, "fast uses two compute warpgroups");
-static_assert(kCtaThreads == 384, "fast CTA is 128 producer + 256 compute threads");
+static_assert(kComputeThreads == kFastComputeThreads, "fast compute threads come from WGMMA_COMPUTE_THREADS");
+static_assert(kComputeThreads >= 128 && kComputeThreads % 128 == 0,
+              "fast compute threads are whole warpgroups");
+static_assert(kCtaThreads <= 1024, "fast CTA threads must fit in one block");
 static_assert(kCtaM % (kInstM * kComputeWarpgroups) == 0,
               "CTA_M must be divisible by 64 * compute warpgroups");
 
@@ -48,8 +51,6 @@ void gemm_device(ProblemShape shape_MNK, CtaTiler cta_tiler,
   CUTE_STATIC_ASSERT_V(congruent(select<0,1>(shape_MNK), dC));
   (void)A;
   (void)B;
-  (void)alpha;
-  (void)beta;
 
   auto [M, N, K] = shape_MNK;
   Tensor mA = tma_a.get_tma_tensor(make_shape(M, K));
@@ -127,7 +128,6 @@ void gemm_device(ProblemShape shape_MNK, CtaTiler cta_tiler,
   Tensor tCrA = thr_mma.make_fragment_A(tCsA);
   Tensor tCrB = thr_mma.make_fragment_B(tCsB);
   Tensor tCrC = thr_mma.make_fragment_C(tCgC);
-  (void)tCgC;
 
   if (is_consumer) {
     clear(tCrC);
@@ -143,9 +143,14 @@ void gemm_device(ProblemShape shape_MNK, CtaTiler cta_tiler,
       warpgroup_commit_batch();
       ++read_state;
 
-      if (k_tile >= 1) {
+      if constexpr (kMaxInflight == 1) {
+        warpgroup_wait<0>();
+        warpgroup_fence_operand(tCrC);
+        EmptyBarrier::arrive(&empty[release_state.index()]);
+        ++release_state;
+      } else if (k_tile >= 1) {
         // 本 warpgroup 的前一批已完成。每个计算线程到达一次；
-        // 两个 warpgroup 都到达后，producer 才能覆盖这个 A/B 槽。
+        // 全部计算 warpgroup 都到达后，producer 才能覆盖这个 A/B 槽。
         warpgroup_wait<1>();
         warpgroup_fence_operand(tCrC);
         EmptyBarrier::arrive(&empty[release_state.index()]);
@@ -154,13 +159,27 @@ void gemm_device(ProblemShape shape_MNK, CtaTiler cta_tiler,
     }
     warpgroup_wait<0>();
     warpgroup_fence_operand(tCrC);
-    // 最后一批没有被 wait<1> 配对释放。producer 的排空等待这一次 arrive。
-    if (k_tile_count > 0) {
-      EmptyBarrier::arrive(&empty[release_state.index()]);
+    // inflight=2 时最后一批没有被 wait<1> 配对释放。producer 的排空等待这一次 arrive。
+    if constexpr (kMaxInflight == 2) {
+      if (k_tile_count > 0) {
+        EmptyBarrier::arrive(&empty[release_state.index()]);
+      }
     }
   }
 
-  store_c_coalesced(C, dC, thr_mma, tCrC, shared_memory, is_consumer);
+  // tCgC 必须活到 kernel 结束：fragment 可能引用它的布局。
+  if constexpr (kCoalescedEpilogue) {
+    (void)alpha;
+    (void)beta;
+    (void)tCgC;
+    store_c_coalesced(C, dC, thr_mma, tCrC, shared_memory, is_consumer);
+  } else if (is_consumer) {
+    axpby(alpha, tCrC, beta, tCgC);
+  } else {
+    (void)alpha;
+    (void)beta;
+    (void)tCgC;
+  }
 }
 
 }  // namespace gemm_backend

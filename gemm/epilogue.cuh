@@ -1,7 +1,9 @@
 #pragma once
 
-// 唯一的写回：寄存器按 MMA 线程映射进共享内存，再以 16 字节向量连续写回 C。
-// alpha=1、beta=0。调用时 CTA 内每个线程都必须进入本函数（里面有 __syncthreads）。
+// 合并写回：寄存器按 MMA 线程映射进共享内存，再以 16 字节向量连续写回 C。
+// 仅在 EPILOGUE_COALESCED=1 时调用。alpha=1、beta=0。
+// 调用时 CTA 内每个线程都必须进入本函数（里面有 __syncthreads）。
+// EPILOGUE_COALESCED=0 时内核改走 cute::axpby，不经过这里。
 #include "config.cuh"
 
 namespace gemm_backend {

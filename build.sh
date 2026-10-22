@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # 仓库根目录的唯一构建入口：编译 teach、fast，以及可选的全输出校验。
 # CUTLASS：--cutlass DIR，否则 $CUTLASS_PATH，否则 <repo>/third_party/cutlass。
-# $CUTLASS_ROOT 只作为 CUTLASS_PATH 的旧别名。tile / INST_N / PIPE 来自 gemm/config.cuh。
+# $CUTLASS_ROOT 只作为 CUTLASS_PATH 的旧别名。
+# 不传 -D 时，tile / PIPE / 指令 N 来自 gemm/config.cuh。-- 后面的 -D 会覆盖这些宏。
 set -euo pipefail
 
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
@@ -37,10 +38,16 @@ Usage: bash build.sh teach|fast|all [options] [-- extra nvcc flags]
   ./build/validate_teach
   ./build/validate_fast
 
-默认 CTA=128x128x64，PIPE=3，GMMA 64x128x16，两批在途，合并写回。
-teach = 1 个计算 warpgroup（128 线程）。
-fast  = 128 个 producer 线程 + 2 个计算 warpgroup（共 384 线程）。
-v1–v5 对照实验在 experiments/，不从这里编译。
+不传 -D 时：CTA=128x128x64，PIPE=3，GMMA 64x128x16，两批在途，合并写回。
+teach = 1 个计算 warpgroup（128 线程）。WGMMA_COMPUTE_THREADS 对 teach 无效。
+fast  = 128 个 producer 线程 + WGMMA_COMPUTE_THREADS（默认 256，共 384 线程）。
+
+-- 之后的 nvcc 参数可以覆盖 gemm/config.cuh 里的默认宏，例如：
+  bash build.sh fast --output build/gemm_fast_pipe4 -- -DPIPE=4
+  bash build.sh teach --output build/gemm_teach_n64 -- -DGMMA_INST_N=64
+可用宏：PEAK_CTA_M PEAK_CTA_N PEAK_CTA_K PIPE GMMA_INST_N
+        WGMMA_MAX_INFLIGHT EPILOGUE_COALESCED WGMMA_COMPUTE_THREADS
+编出来的二进制用 --help 打印生效后的配置。v1–v5 归档实验在 experiments/。
 USAGE
 }
 

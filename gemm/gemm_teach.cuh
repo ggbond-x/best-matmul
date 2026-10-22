@@ -1,7 +1,9 @@
 #pragma once
 
 // teach：一个 warpgroup（128 线程）同时负责 TMA 与 WGMMA。
-// 这是 v1–v3 的阅读路径，只保留一条流水：PIPE=3，两批 WGMMA 在途，合并写回。
+// 默认是 v3：PIPE=3，两批 WGMMA 在途，合并写回。这些数来自 config.cuh 的宏。
+// -DWGMMA_MAX_INFLIGHT=1 改成算完再释放；-DEPILOGUE_COALESCED=0 改成直接 axpby。
+// WGMMA_COMPUTE_THREADS 不作用于 teach，计算线程固定 128。
 // 线程 0 所在 warp 的 elected lane 提交 TMA；128 个线程都执行 WGMMA，并在释放槽位时各到达一次。
 #include "config.cuh"
 #include "epilogue.cuh"
@@ -44,8 +46,6 @@ void gemm_device(ProblemShape shape_MNK, CtaTiler cta_tiler,
   CUTE_STATIC_ASSERT_V(congruent(select<0,1>(shape_MNK), dC));
   (void)A;
   (void)B;
-  (void)alpha;
-  (void)beta;
 
   auto [M, N, K] = shape_MNK;
   Tensor mA = tma_a.get_tma_tensor(make_shape(M, K));
@@ -122,13 +122,11 @@ void gemm_device(ProblemShape shape_MNK, CtaTiler cta_tiler,
   Tensor tCrB = thr_mma.make_fragment_B(tCsB);
   Tensor tCrC = thr_mma.make_fragment_C(tCgC);
   clear(tCrC);
-  (void)tCgC;
 
   // read 等 full，release 等计算完成后再 arrive empty，write 是下一次 TMA 要复用的槽。
   // 三者不能共用一个 PipelineState：phase 记录的是各自绕环的次数。
   auto write_state = cutlass::PipelineState<kPipeCount>();
   auto read_state = cutlass::PipelineState<kPipeCount>();
-  auto release_state = cutlass::PipelineState<kPipeCount>();
   int pending_tiles = prefetch_tiles;
 
   // 所有线程都要更新计数；只有 producer lane 等待 empty 并提交 TMA。
@@ -146,33 +144,61 @@ void gemm_device(ProblemShape shape_MNK, CtaTiler cta_tiler,
     }
   };
 
-  // 提交第 i 批后，wait<1> 保证第 i-1 批已经结束，于是可以释放旧槽、与当前计算重叠。
-  // 主循环结束后不再复用槽位，最后一批只 wait<0>，不必再 arrive empty。
-  int issued_batches = 0;
-  warpgroup_fence_operand(tCrC);
-  CUTE_NO_UNROLL
-  while (pending_tiles > 0) {
-    int pipe = read_state.index();
-    FullBarrier::wait(&full[pipe], read_state.phase());
-    warpgroup_arrive();
-    gemm(mma, tCrA(_,_,_,pipe), tCrB(_,_,_,pipe), tCrC);
-    warpgroup_commit_batch();
-    ++read_state;
-    --pending_tiles;
-    ++issued_batches;
-
-    if (issued_batches >= 2) {
-      warpgroup_wait<1>();
+  if constexpr (kMaxInflight == 1) {
+    // 当前批次全部完成后才释放槽位。128 个线程各到达一次。
+    CUTE_NO_UNROLL
+    while (pending_tiles > 0) {
+      int pipe = read_state.index();
+      FullBarrier::wait(&full[pipe], read_state.phase());
       warpgroup_fence_operand(tCrC);
-      EmptyBarrier::arrive(&empty[release_state.index()]);
-      ++release_state;
+      warpgroup_arrive();
+      gemm(mma, tCrA(_,_,_,pipe), tCrB(_,_,_,pipe), tCrC);
+      warpgroup_commit_batch();
+      warpgroup_wait<0>();
+      warpgroup_fence_operand(tCrC);
+      EmptyBarrier::arrive(&empty[pipe]);
+      ++read_state;
+      --pending_tiles;
       refill_one_tile();
     }
-  }
-  warpgroup_wait<0>();
-  warpgroup_fence_operand(tCrC);
+  } else {
+    // 提交第 i 批后，wait<1> 保证第 i-1 批已经结束，于是可以释放旧槽、与当前计算重叠。
+    // 主循环结束后不再复用槽位，最后一批只 wait<0>，不必再 arrive empty。
+    auto release_state = cutlass::PipelineState<kPipeCount>();
+    int issued_batches = 0;
+    warpgroup_fence_operand(tCrC);
+    CUTE_NO_UNROLL
+    while (pending_tiles > 0) {
+      int pipe = read_state.index();
+      FullBarrier::wait(&full[pipe], read_state.phase());
+      warpgroup_arrive();
+      gemm(mma, tCrA(_,_,_,pipe), tCrB(_,_,_,pipe), tCrC);
+      warpgroup_commit_batch();
+      ++read_state;
+      --pending_tiles;
+      ++issued_batches;
 
-  store_c_coalesced(C, dC, thr_mma, tCrC, shared_memory, true);
+      if (issued_batches >= 2) {
+        warpgroup_wait<1>();
+        warpgroup_fence_operand(tCrC);
+        EmptyBarrier::arrive(&empty[release_state.index()]);
+        ++release_state;
+        refill_one_tile();
+      }
+    }
+    warpgroup_wait<0>();
+    warpgroup_fence_operand(tCrC);
+  }
+
+  // tCgC 必须活到 kernel 结束：fragment 可能引用它的布局。
+  if constexpr (kCoalescedEpilogue) {
+    (void)alpha;
+    (void)beta;
+    (void)tCgC;
+    store_c_coalesced(C, dC, thr_mma, tCrC, shared_memory, true);
+  } else {
+    axpby(alpha, tCrC, beta, tCgC);
+  }
 }
 
 }  // namespace gemm_backend

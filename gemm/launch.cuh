@@ -41,7 +41,8 @@ inline void print_configuration()
               kInstN, kCtaM, kCtaN, kCtaK, kPipe, kMaxInflight);
   std::printf("Producer threads=%d, compute threads=%d, compute warpgroups=%d, CTA threads=%d\n",
               kProducerThreads, kComputeThreads, kComputeWarpgroups, kCtaThreads);
-  std::printf("Epilogue: coalesced 16-byte store, alpha=1, beta=0\n");
+  std::printf("Epilogue: %s, alpha=1, beta=0\n",
+              kCoalescedEpilogue ? "coalesced 16-byte store" : "direct axpby");
 }
 
 // 类型擦除只包在准备好的状态外面。operator() 不再分支 NT/TN，也不再建描述符。
@@ -133,7 +134,7 @@ __host__ PreparedGemm prepare_major(gemm_bench::GemmProblem const& problem,
   using Storage = SharedStorage<Element, Element, decltype(sA), decltype(sB)>;
   gemm_bench::LaunchConfig config;
   int mainloop_bytes = int(sizeof(Storage));
-  int epilogue_bytes = kCtaM * kCtaN * int(sizeof(Element));
+  int epilogue_bytes = kCoalescedEpilogue ? kCtaM * kCtaN * int(sizeof(Element)) : 0;
   config.smem_bytes = std::max(mainloop_bytes, epilogue_bytes);
   config.block = dim3(kProducerThreads + size(tiled_mma));
   config.grid = dim3(round_up(size(ceil_div(problem.m, bM)), config.cluster.x),
