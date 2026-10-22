@@ -1,5 +1,9 @@
 # H100 PCIe：v1–v5 对照实验
 
+> 这是归档实验说明。当前阅读和默认构建路径是仓库根目录的 `teach` / `fast`，见根目录 [README.md](../README.md)。
+> 在 `experiments/` 中执行 `bash build.sh` 和 `bash run.sh`。CUTLASS 用 `CUTLASS_PATH`，或放在仓库根的 `third_party/cutlass`。
+> 内核源码在 `archive/v1-v5/`。下文里的 `matmul/modular/` 是迁移前的目录名，对应现在的仓库根目录加上 `archive/v1-v5/kernels/`。
+
 本文说明如何使用 `build.sh` 和 `run.sh` 比较调度、合并写回、warp specialization 与多个计算 warpgroup。当前开发环境没有 H100 和 Nsight Compute；本文提供实验方法及可复制命令，不包含 H100 性能实测结论。
 
 本实验测量已驻留 GPU 显存的 dense FP16 GEMM。输入、累加和输出均为 FP16，`alpha=1`、`beta=0`，运算量按 `2*M*N*K` 计算。主机分配、TMA 描述符准备、Host↔Device 拷贝、数值校验及状态查询在正式计时之外。Event 区间包含连续提交的一批 GEMM，可能包含提交不及时造成的 GPU 空隙；它也不是端到端业务耗时。GPU 显存常驻不等于每次都从 HBM 读取：重复运行可能命中 L2。
@@ -83,7 +87,7 @@ NVCC_PATH=/usr/local/cuda/bin/nvcc bash test.sh --with-nsys
 
 ## 3. 按步骤执行
 
-以下命令在 Linux/Bash 的 `matmul/modular/` 目录执行，同一实验使用同一个终端中的变量。先设置实际 GPU 索引或完整 GPU UUID；每次新实验重新生成 `EXP_DIR`。`run.sh` 要求结果目录尚不存在，防止覆盖已有结果。
+以下命令在 Linux/Bash 的 `experiments/` 目录执行，同一实验使用同一个终端中的变量。先设置实际 GPU 索引或完整 GPU UUID；每次新实验重新生成 `EXP_DIR`。`run.sh` 要求结果目录尚不存在，防止覆盖已有结果。
 
 ```bash
 GPU=0
@@ -96,7 +100,7 @@ CORE=v1,v2,v3,v4,v5
 # 只显示计划，无需安装 CUDA/CUTLASS，也不会创建输出文件。
 bash build.sh --suite all --with-validation --output-dir "$BUILD_DIR" --dry-run
 
-# 自动定位：CUTLASS_ROOT 或项目 third_party；CUDACXX 或标准 CUDA 路径/PATH。
+# 自动定位：CUTLASS_PATH，或仓库根 third_party/cutlass；CUDACXX 或 /usr/local/cuda/bin/nvcc。
 bash build.sh --suite all --with-validation --output-dir "$BUILD_DIR"
 ```
 
@@ -223,9 +227,9 @@ Compute Sanitizer 应足够新以识别 Hopper 的 TMA/WGMMA 同步语义。诊�
 | 参数 | 默认值 | 范围 / 约束 | 作用 |
 |---|---|---|---|
 | `--suite` | `core` | `core` / `sweep` / `all` | 选择 5 / 10 / 15 个配置；成功后替换所选 suite 的 manifest |
-| `--cutlass DIR` | `CUTLASS_ROOT`，否则项目 `third_party` 自动定位 | 包含所需 CUTLASS 头文件的根目录 | 显式路径优先；自动尝试 `third_party/cutlass`、`third_party/CUTLASS`、`third_party` |
+| `--cutlass DIR` | `CUTLASS_PATH`，否则仓库根 `third_party/cutlass` | 包含所需 CUTLASS 头文件的根目录 | 显式路径优先；也接受旧名 `CUTLASS_ROOT`；自动尝试 `third_party/cutlass`、`third_party/CUTLASS`、`third_party` |
 | `--nvcc PATH` | `CUDACXX`，否则 `/usr/local/cuda/bin/nvcc`，再查 PATH | 支持当前源码和 SM90a 的编译器 | 固定本次所有配置的工具链 |
-| `--output-dir DIR` | `modular/build/h100_pcie` | 可写目录；相对当前目录解析 | 保存二进制、manifest、编译日志和构建元数据 |
+| `--output-dir DIR` | `experiments/build/h100_pcie` | 可写目录；相对当前目录解析 | 保存二进制、manifest、编译日志和构建元数据 |
 | `--with-validation` | 关 | 无值开关 | 为每个配置编译 `.validate` 并执行 CPU 映射检查 |
 | `--dry-run` | 关 | 无值开关 | 显示命令与 manifest，不要求 CUDA/CUTLASS 存在，不写文件 |
 | `--help` / `-h` | 关 | 无值开关 | 显示帮助后退出 |
@@ -237,8 +241,8 @@ Compute Sanitizer 应足够新以识别 Hopper 的 TMA/WGMMA 同步语义。诊�
 | 参数 | 默认值 | 范围 / 约束 | 作用 |
 |---|---|---|---|
 | `--mode` | `bench` | `env/check/validate/bench/ncu/nsys/sanitize/disasm/all` | 选择记录、校验、计时或分析阶段；nsys 单独运行 |
-| `--build-dir DIR` | `modular/build/h100_pcie` | 含本次构建 manifest 的目录；env 无需 manifest | 定位配置及二进制；validate/all 还要求校验 sidecar 和启用标记 |
-| `--output-dir DIR` | `modular/reports/h100_pcie/<时间戳>_<mode>_<PID>` | 必须不存在；相对当前目录解析 | 新建本次结果目录，保留已有实验 |
+| `--build-dir DIR` | `experiments/build/h100_pcie` | 含本次构建 manifest 的目录；env 无需 manifest | 定位配置及二进制；validate/all 还要求校验 sidecar 和启用标记 |
+| `--output-dir DIR` | `experiments/reports/h100_pcie/<时间戳>_<mode>_<PID>` | 必须不存在；相对当前目录解析 | 新建本次结果目录，保留已有实验 |
 | `--gpu ID` | `0` | 单张完整 GPU 的 nvidia-smi 索引或 GPU UUID | 先解析 UUID，再设置 CUDA_VISIBLE_DEVICES；进程内编号为 0 |
 | `--variants CSV` | `all` | manifest 中互不重复的配置 ID | 选择本次比较组及初始顺序 |
 | `--layouts CSV` | `NT,TN` | `NT`、`TN` 或二者 | 选择 bench/check/ncu/nsys/sanitize 布局；全输出 validate 自行覆盖两者 |

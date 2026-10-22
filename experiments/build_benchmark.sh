@@ -4,21 +4,22 @@
 set -euo pipefail
 
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+repo_root="$(cd -- "$script_dir/.." && pwd)"
 kernel="v1"
-cutlass_root="${CUTLASS_ROOT:-}"
-nvcc="${CUDACXX:-nvcc}"
+cutlass_root="${CUTLASS_PATH:-${CUTLASS_ROOT:-}}"
+nvcc="${CUDACXX:-}"
 output=""
 extra_flags=()
 
 usage() {
   cat <<'USAGE'
-Usage: bash build_benchmark.sh --cutlass DIR [options] [-- extra nvcc flags]
+Usage: bash experiments/build_benchmark.sh --cutlass DIR [options] [-- extra nvcc flags]
   --kernel v1|v2|v3|v4|v5|HEADER
-                           Kernel alias or header path (default: v1)
-                           Relative paths are resolved from the modular directory.
-  --cutlass DIR            CUTLASS checkout root (or set CUTLASS_ROOT)
-  --nvcc PATH              CUDA compiler (default: CUDACXX or nvcc)
-  --output PATH            Output binary (default: modular/build/<kernel basename>)
+                           Archived kernel alias or header path (default: v1)
+                           Relative paths are resolved from the repository root.
+  --cutlass DIR            CUTLASS checkout root (or set CUTLASS_PATH)
+  --nvcc PATH              CUDA compiler (default: CUDACXX, /usr/local/cuda/bin/nvcc, or nvcc)
+  --output PATH            Output binary (default: experiments/build/<kernel basename>)
                            Explicit output paths are relative to the current directory.
   --help                   Show this help
 
@@ -56,14 +57,14 @@ done
 
 # 2. 内核相对路径以本脚本所在目录为基准，不受调用位置影响。
 case "$kernel" in
-  v1) kernel="kernels/wgmma_tma_fp16_v1.cuh" ;;
-  v2) kernel="kernels/wgmma_tma_fp16_pipeline_v2.cuh" ;;
-  v3) kernel="kernels/wgmma_tma_fp16_epilogue_v3.cuh" ;;
-  v4) kernel="kernels/wgmma_tma_fp16_warp_specialized_v4.cuh" ;;
-  v5) kernel="kernels/wgmma_tma_fp16_multi_warpgroup_v5.cuh" ;;
+  v1) kernel="$repo_root/archive/v1-v5/kernels/wgmma_tma_fp16_v1.cuh" ;;
+  v2) kernel="$repo_root/archive/v1-v5/kernels/wgmma_tma_fp16_pipeline_v2.cuh" ;;
+  v3) kernel="$repo_root/archive/v1-v5/kernels/wgmma_tma_fp16_epilogue_v3.cuh" ;;
+  v4) kernel="$repo_root/archive/v1-v5/kernels/wgmma_tma_fp16_warp_specialized_v4.cuh" ;;
+  v5) kernel="$repo_root/archive/v1-v5/kernels/wgmma_tma_fp16_multi_warpgroup_v5.cuh" ;;
 esac
 if [[ "$kernel" != /* ]]; then
-  kernel="$script_dir/$kernel"
+  kernel="$repo_root/$kernel"
 fi
 [[ -f "$kernel" ]] || fail "Kernel header does not exist: $kernel"
 kernel="$(cd -- "$(dirname -- "$kernel")" && pwd)/$(basename -- "$kernel")"
@@ -73,14 +74,23 @@ if [[ "$kernel" == *'"'* || "$kernel" == *$'\n'* ]]; then
 fi
 
 # 3. 检查 CUTLASS 根目录和编译器。tools/util 为可选依赖。
-[[ -n "$cutlass_root" ]] || fail "Missing CUTLASS root: set --cutlass DIR or CUTLASS_ROOT"
+if [[ -z "$cutlass_root" ]]; then
+  for candidate in "$repo_root/third_party/cutlass" "$repo_root/third_party/CUTLASS"; do
+    if [[ -f "$candidate/include/cute/tensor.hpp" ]]; then cutlass_root="$candidate"; break; fi
+  done
+fi
+[[ -n "$cutlass_root" ]] || fail "Missing CUTLASS root: set --cutlass DIR or CUTLASS_PATH"
+if [[ -z "$nvcc" ]]; then
+  if [[ -x /usr/local/cuda/bin/nvcc ]]; then nvcc=/usr/local/cuda/bin/nvcc
+  else nvcc="$(command -v nvcc 2>/dev/null || true)"; nvcc="${nvcc:-nvcc}"; fi
+fi
 [[ -d "$cutlass_root" ]] || fail "CUTLASS directory does not exist: $cutlass_root"
 cutlass_root="$(cd -- "$cutlass_root" && pwd)"
 for header in cute/tensor.hpp cute/util/debug.hpp cutlass/half.h; do
   [[ -f "$cutlass_root/include/$header" ]] ||
     fail "Missing CUTLASS header: $cutlass_root/include/$header (pass the root containing include/)"
 done
-include_flags=(-I "$cutlass_root/include")
+include_flags=(-I "$repo_root" -I "$cutlass_root/include")
 if [[ -d "$cutlass_root/tools/util/include" ]]; then
   include_flags+=(-I "$cutlass_root/tools/util/include")
 fi
@@ -98,4 +108,4 @@ printf 'Kernel header: %s\nOutput: %s\n' "$kernel" "$output"
   "${include_flags[@]}" \
   "-DGEMM_KERNEL_HEADER=\"$kernel\"" \
   "${extra_flags[@]}" \
-  "$script_dir/benchmark_host.cu" -o "$output"
+  "$repo_root/archive/v1-v5/benchmark_host.cu" -o "$output"

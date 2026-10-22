@@ -2,14 +2,15 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "C/C++ Runner: Debug Session",
+      "name": "gemm_fast",
       "type": "cppdbg",
       "request": "launch",
-      "args": [],
+      "program": "${workspaceFolder}/build/gemm_fast",
+      "args": ["256", "256", "64", "N", "T", "3", "event", "1", "1", "2"],
       "stopAtEntry": false,
-      "externalConsole": true,
-      "cwd": "e:/privateKnowledgeRepo/nv_cuda/30-Knowledge/CUDA/Nsight Compute/矩阵乘性能优化/源代码/modular",
-      "program": "e:/privateKnowledgeRepo/nv_cuda/30-Knowledge/CUDA/Nsight Compute/矩阵乘性能优化/源代码/modular/build/Debug/outDebug",
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

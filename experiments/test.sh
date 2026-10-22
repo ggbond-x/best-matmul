@@ -3,13 +3,21 @@
 # 默认采集 60 份 cold focused + 1 份 v5 warm full NCU 报告，完整运行可能较久。
 set -euo pipefail
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
+repo_root="$(cd -- "$PWD/.." && pwd)"
 
 # 可用同名环境变量覆盖默认配置；相对路径以脚本目录为基准。
 GPU="${GPU:-0}"
 BUILD_DIR="${BUILD_DIR:-$PWD/build/h100_pcie}"
 EXP_DIR="${EXP_DIR:-$PWD/reports/h100_pcie/manual_$(date +%Y%m%d_%H%M%S)_$$}"
-CUTLASS_PATH="${CUTLASS_PATH:-/workspace/peak_flops/third_party/cutlass}"
-NVCC_PATH="${NVCC_PATH:-/usr/local/cuda/bin/nvcc}"
+if [[ -z "${CUTLASS_PATH:-}" && -z "${CUTLASS_ROOT:-}" ]]; then
+  if [[ -f "$repo_root/third_party/cutlass/include/cute/tensor.hpp" ]]; then
+    CUTLASS_PATH="$repo_root/third_party/cutlass"
+  elif [[ -f "$repo_root/third_party/CUTLASS/include/cute/tensor.hpp" ]]; then
+    CUTLASS_PATH="$repo_root/third_party/CUTLASS"
+  fi
+fi
+CUTLASS_PATH="${CUTLASS_PATH:-${CUTLASS_ROOT:-$repo_root/third_party/cutlass}}"
+NVCC_PATH="${NVCC_PATH:-${CUDACXX:-/usr/local/cuda/bin/nvcc}}"
 NCU="${NCU:-ncu}"
 CORE=v1,v2,v3,v4,v5
 SWEEP_SHAPES=4096x4096x4096,4096x4096x256
@@ -93,8 +101,8 @@ run_step build bash build.sh "${build_args[@]}"
 # 在耗时的 GPU 分析前归档；后续重编译不会覆盖本次材料。
 # 只打包明确列出的源码，不把 reports/build 递归装入源码包。
 run_step archive_build cp -a -- "$BUILD_DIR" "$EXP_DIR/build_artifacts"
-run_step archive_source tar -czf "$EXP_DIR/source.tar.gz" \
-  benchmark_host.cu host kernels tests build.sh build_benchmark.sh run.sh test.sh README.md H100_BENCHMARK.md
+run_step archive_source tar -czf "$EXP_DIR/source.tar.gz" -C "$repo_root" \
+  benchmark_host.cu host gemm tests build.sh README.md archive experiments
 
 run_step environment bash run.sh --mode env --build-dir "$BUILD_DIR" --gpu "$GPU" \
   --output-dir "$EXP_DIR/env"

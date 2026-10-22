@@ -9,8 +9,10 @@
 
 // 一条指令的形状为 64 x GMMA_INST_N x 16，输入、累加和输出均为 FP16。
 // SS 表示 A/B 均通过共享内存描述符提供操作数。
+// 默认 128，与 experiments/build.sh 以及现行 gemm/config.cuh 相同。
+// 头文件曾经默认 64，而套件命令行传 128，两次构建会得到不同指令。
 #ifndef GMMA_INST_N
-#define GMMA_INST_N 64
+#define GMMA_INST_N 128
 #endif
 
 #ifndef PIPE
