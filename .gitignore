@@ -1,4 +1,12 @@
 build/
 reports/
 
-cuBLAS_test/build_csv
+cuBLAS_test/build*/
+cuBLAS_test/__pycache__/
+cuBLAS_test/results/*.csv
+cuBLAS_test/results/*.json
+cuBLAS_test/results/*.log
+cuBLAS_test/!results/example_schema.csv
+
+cuBLAS_test/output/
+cuBLAS_test/Testing/
