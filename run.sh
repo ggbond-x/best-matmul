@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# H100 PCIe 对照测试入口。在 Linux/Bash 中执行；编译命令全部在 build.sh。
+# Hopper 对照测试入口。在 Linux/Bash 中执行；编译命令全部在 build.sh。
 # 计时、正确性检查、NCU replay、Compute Sanitizer 分别保存，禁止混用其耗时。
 # 不自动修改应用时钟、功耗上限、MIG、持久化模式或驱动计数器权限。
 set -euo pipefail
@@ -62,7 +62,8 @@ all = 环境记录 + 全输出 validate + bench + ncu + disasm；需要 build.sh
 check 是主程序抽样检查；validate 才是小矩阵每个 C 元素的参考校验。
 sanitize 单独运行，代价高；其耗时与 NCU 日志中的 TFLOPS 都不能当作性能结果。
 nsys 单独运行，用 Nsight Systems 检查 CPU 提交空隙和 GPU 时间线，不参与成绩汇总。
-env/disasm 不启动内核；env 不需要 manifest。其余模式需要可用的 H100。
+env/disasm 不启动内核；env 不需要 manifest。其余模式需要 Hopper GPU（计算能力 9.0）。
+build/h100_pcie 和 reports/h100_pcie 为沿用的目录名，也可用于 H800 等 Hopper GPU。
 USAGE
 }
 die() { printf 'Error: %s\n' "$*" >&2; exit 1; }
@@ -258,7 +259,16 @@ if [[ "$mode" != disasm ]]; then
     gpu_uuid="$("${gpu_query[@]}" --query-gpu=uuid --format=csv,noheader)" || die 'GPU 选择失败'
     gpu_name="$("${gpu_query[@]}" --query-gpu=name --format=csv,noheader)" || die 'GPU 名称查询失败'
     [[ "$gpu_uuid" == GPU-* && "$gpu_uuid" != *$'\n'* ]] || die '请指定一张完整 GPU 的索引或 UUID'
-    if [[ "$mode" != env && "$gpu_name" != *H100* ]]; then die "本测试面向 H100，当前设备为 $gpu_name"; fi
+    # sm_90a 内核按架构放行；H800/H200/GH200 等型号不应被名称过滤。
+    # env 仅记录环境，允许在其他架构上使用；实际执行前 CUDA 程序仍会检查设备。
+    if [[ "$mode" != env ]]; then
+      gpu_compute_cap="$("${gpu_query[@]}" --query-gpu=compute_cap --format=csv,noheader)" || \
+        die "GPU 计算能力查询失败，无法确认 $gpu_name 是否支持 Hopper / sm_90a"
+      gpu_compute_cap="${gpu_compute_cap//[[:space:]]/}"
+      [[ "$gpu_compute_cap" == 9.0 ]] || \
+        die "本测试需要 Hopper / compute capability 9.0，当前设备为 $gpu_name（计算能力 $gpu_compute_cap）"
+      printf 'compute_cap=%s\n' "$gpu_compute_cap" >> "$output_dir/run_metadata.txt"
+    fi
     export CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES="$gpu_uuid"
     printf 'export CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=%q\n' "$gpu_uuid" >> "$output_dir/commands.sh"
     printf 'gpu=%s\nuuid=%s\n' "$gpu_name" "$gpu_uuid" >> "$output_dir/run_metadata.txt"

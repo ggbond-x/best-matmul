@@ -70,8 +70,9 @@ int main(int argc, char** argv)
   int device = 0;
   CUTE_CHECK_ERROR(cudaGetDevice(&device));
   CUTE_CHECK_ERROR(cudaGetDeviceProperties(&props, device));
-  if (props.major != 9) {
-    std::cerr << "This benchmark requires Hopper / compute capability 9.x\n";
+  if (props.major != 9 || props.minor != 0) {
+    std::cerr << "This benchmark requires Hopper / compute capability 9.0; device "
+              << props.name << " has compute capability " << props.major << '.' << props.minor << '\n';
     return EXIT_FAILURE;
   }
 

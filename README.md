@@ -2,7 +2,11 @@
 
 这里共用命令行、数据生成、校验与测量流程，在编译时选择 v1/v2/v3/v4/v5 内核。计算约定为 FP16 输入和输出、`alpha=1`、`beta=0`，支持 NT/TN。
 
-## H100 PCIe 五版本对照实验
+## Hopper 五版本对照实验
+
+运行支持计算能力 9.0 的 Hopper GPU，包括 H100、H800、H200 和 GH200；`run.sh` 按计算能力检查，不限制型号名称。编译目标仍为 `sm_90a`。默认 `build/h100_pcie`、`reports/h100_pcie` 及文档文件名为沿用名称，不代表设备限制；可用 `--build-dir` / `--output-dir` 或 `BUILD_DIR` / `EXP_DIR` 指定其他目录。
+
+若 H800 曾报“本测试面向 H100”，同步修复后的 `run.sh` 即可解除脚本限制，已有 `sm_90a` 二进制可继续使用。先在新结果目录重跑 `bash run.sh --mode validate --gpu 0`，通过后再运行计时或完整实验。GPU 型号和计算能力保存在 `run_metadata.txt`，比较峰值时使用实际设备的规格。
 
 新增 [build.sh](build.sh) 和 [run.sh](run.sh)，分别负责统一编译与测试。完整配置表、脚本参数、实验顺序、NCU 指标解释和诊断命令见 [H100_BENCHMARK.md](H100_BENCHMARK.md)。在本目录的 Linux/Bash 中执行：
 
@@ -11,7 +15,7 @@
 # 默认自动定位项目 CUTLASS 和 /usr/local/cuda/bin/nvcc，也可显式传 --cutlass/--nvcc。
 bash build.sh --suite all --with-validation
 
-# 先在 H100 上校验，再独立计时；报告目录自动按时间新建。
+# 先在 Hopper GPU 上校验，再独立计时；报告目录自动按时间新建。
 bash run.sh --mode validate --gpu 0
 bash run.sh --mode bench --gpu 0 --variants v1,v2,v3,v4,v5
 

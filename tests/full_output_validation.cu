@@ -130,9 +130,10 @@ int main(int argc, char** argv)
   int device = 0;
   CUTE_CHECK_ERROR(cudaGetDevice(&device));
   CUTE_CHECK_ERROR(cudaGetDeviceProperties(&properties, device));
-  if (properties.major != 9) {
-    std::cerr << "Full-output validation requires Hopper / compute capability 9.x. "
-                 "Use --mapping-only for host validation.\n";
+  if (properties.major != 9 || properties.minor != 0) {
+    std::cerr << "Full-output validation requires Hopper / compute capability 9.0; device "
+              << properties.name << " has compute capability " << properties.major << '.'
+              << properties.minor << ". Use --mapping-only for host validation.\n";
     return EXIT_FAILURE;
   }
 #if defined(CUTLASS_ARCH_MMA_SM90_SUPPORTED)

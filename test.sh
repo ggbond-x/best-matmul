@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# H100 PCIe 完整实验；--dry-run 只看计划，--with-nsys 追加小矩阵时间线。
+# Hopper 完整实验；--dry-run 只看计划，--with-nsys 追加小矩阵时间线。
 # 默认采集 60 份 cold focused + 1 份 v5 warm full NCU 报告，完整运行可能较久。
 set -euo pipefail
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")"

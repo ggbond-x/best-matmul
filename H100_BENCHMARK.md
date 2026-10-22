@@ -1,10 +1,12 @@
-# H100 PCIe：v1–v5 对照实验
+# Hopper GPU：v1–v5 对照实验
 
 本文说明如何使用 `build.sh` 和 `run.sh` 比较调度、合并写回、warp specialization 与多个计算 warpgroup。当前开发环境没有 H100 和 Nsight Compute；本文提供实验方法及可复制命令，不包含 H100 性能实测结论。
 
 本实验测量已驻留 GPU 显存的 dense FP16 GEMM。输入、累加和输出均为 FP16，`alpha=1`、`beta=0`，运算量按 `2*M*N*K` 计算。主机分配、TMA 描述符准备、Host↔Device 拷贝、数值校验及状态查询在正式计时之外。Event 区间包含连续提交的一批 GEMM，可能包含提交不及时造成的 GPU 空隙；它也不是端到端业务耗时。GPU 显存常驻不等于每次都从 HBM 读取：重复运行可能命中 L2。
 
-比较理论峰值时，确认实际设备为 **H100 PCIe 80GB**，并使用对应 dense FP16 Tensor Core 口径、实际工作频率和功耗条件。SXM、FP8、结构化稀疏的峰值不能作为本实验的 PCIe dense FP16 基准。脚本检查 GPU 名称包含 H100，但不会替你证明其为 PCIe 80GB；以环境记录中的实际型号、形态及配置为准。
+运行支持计算能力 **9.0** 的 Hopper GPU，包括 H100、H800、H200 和 GH200；脚本查询计算能力，CUDA 程序也会检查设备，不按型号名称过滤。编译目标保持 `sm_90a`。默认 `build/h100_pcie`、`reports/h100_pcie` 和本文文件名为沿用名称，在 H800 上无需修改它们。
+
+比较理论峰值时，使用实际 GPU 型号和形态对应的 dense FP16 Tensor Core 口径、实际工作频率和功耗条件。H100 PCIe 的规格不能直接用于 H800；FP8、结构化稀疏的峰值也不能作为 dense FP16 基准。以环境记录和 `run_metadata.txt` 中的实际型号、计算能力及配置为准。
 
 ## 一键执行
 

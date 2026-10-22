@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# H100 PCIe 对照实验的统一编译入口；在 Linux 中运行 bash build.sh。
+# Hopper 对照实验的统一编译入口；在 Linux 中运行 bash build.sh。
 # 本脚本只编译、读取 --help 和检查 CPU 线程映射，不查询 GPU，也不启动 CUDA 内核。
 # run.sh 只执行已编译程序；二者通过 manifest.tsv 交换配置，避免文件名与宏值不一致。
 set -euo pipefail
