@@ -5,7 +5,7 @@ set -Eeuo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-CUDA_HOME="${CUDA_HOME:-/usr/local/cuda}"
+CUDA_HOME="${CUDA_HOME:-/usr/local/cuda-12.8}"
 NVCC="${NVCC:-$CUDA_HOME/bin/nvcc}"
 CMAKE_BIN="${CMAKE_BIN:-cmake}"
 PYTHON="${PYTHON:-python3}"

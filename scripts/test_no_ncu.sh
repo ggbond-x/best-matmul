@@ -8,8 +8,8 @@ cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
 GPU="${GPU:-0}"
 BUILD_DIR="${BUILD_DIR:-$PWD/build/h100_pcie}"
 EXP_DIR="${EXP_DIR:-$PWD/reports/h100_pcie/manual_$(date +%Y%m%d_%H%M%S)_$$}"
-CUTLASS_PATH="${CUTLASS_PATH:-/workspace/peak_flops/third_party/cutlass}"
-NVCC_PATH="${NVCC_PATH:-/usr/local/cuda/bin/nvcc}"
+CUTLASS_PATH="${CUTLASS_PATH:-/root/scg/cutlass}"
+NVCC_PATH="${NVCC_PATH:-/usr/local/cuda-12.8/bin/nvcc}"
 NCU="${NCU:-ncu}"
 CORE=v1,v2,v3,v4,v5
 SWEEP_SHAPES=4096x4096x4096,4096x4096x256

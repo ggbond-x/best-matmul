@@ -8,8 +8,8 @@ cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
 GPU="${GPU:-0}"
 BUILD_DIR="${BUILD_DIR:-$PWD/build/h100_pcie}"
 EXP_DIR="${EXP_DIR:-$PWD/reports/h100_pcie/manual_$(date +%Y%m%d_%H%M%S)_$$}"
-CUTLASS_PATH="${CUTLASS_PATH:-/workspace/peak_flops/third_party/cutlass}"
-NVCC_PATH="${NVCC_PATH:-/usr/local/cuda/bin/nvcc}"
+CUTLASS_PATH="${CUTLASS_PATH:-/root/scg/cutlass}"
+NVCC_PATH="${NVCC_PATH:-/usr/local/cuda-12.8/bin/nvcc}"
 NCU="${NCU:-ncu}"
 CORE=v1,v2,v3,v4,v5
 SWEEP_SHAPES=4096x4096x4096,4096x4096x256
@@ -27,10 +27,10 @@ while (($#)); do
 Usage: bash test.sh [--dry-run] [--with-nsys]
   --dry-run    只打印命令，不检查工具/GPU，不编译，不创建目录
   --with-nsys  追加五个核心版本在 1024^3、NT/TN 下的 NSYS 时间线
-环境变量：GPU、CUTLASS_PATH、NVCC_PATH、NCU、BUILD_DIR、EXP_DIR。
-EXP_DIR 必须不存在，且不能位于 BUILD_DIR 内部。
-示例：CUTLASS_PATH=/opt/cutlass GPU=0 bash test.sh --with-nsys
-正式成绩只取 bench_*，不使用 profiler/Sanitizer 日志中的耗时。
+  环境变量：GPU、CUTLASS_PATH、NVCC_PATH、NCU、BUILD_DIR、EXP_DIR。
+  EXP_DIR 必须不存在，且不能位于 BUILD_DIR 内部。
+  示例：CUTLASS_PATH=/opt/cutlass GPU=0 bash test.sh --with-nsys
+  正式成绩只取 bench_*，不使用 profiler/Sanitizer 日志中的耗时。
 USAGE
       exit 0 ;;
     *) printf '未知参数：%s\n' "$1" >&2; exit 2 ;;
@@ -127,29 +127,6 @@ run_step bench_m256_threads bash run.sh --mode bench --build-dir "$BUILD_DIR" --
   --variants v4_m256_t128,v5_m256_t128,v5_m256_t256,v5_m256_t512 \
   --baseline v5_m256_t128 --shapes "$SWEEP_SHAPES" --layouts NT,TN --repeats 4 \
   --output-dir "$EXP_DIR/bench_m256_threads"
-
-# 15 配置 × NT/TN × 长/短 K = 60 份 focused 报告，统一 cold/kernel replay 条件。
-# 短 K 用于分析启动、排空和写回。每份均保存 ncu-rep/raw.csv/details.txt/log。
-for shape in 4096x4096x4096 4096x4096x256; do
-  run_step "ncu_cold_${shape}" bash run.sh --mode ncu --build-dir "$BUILD_DIR" --gpu "$GPU" \
-    --variants all --layouts NT,TN --profile-shape "$shape" \
-    --ncu-set focused --ncu-cache cold --ncu-clock none --launch-skip 50 --timeout 7200 \
-    --output-dir "$EXP_DIR/ncu_all_cold_${shape}"
-done
-
-# v5 warm full 仅用于深入查看该配置，不与其他版本 cold 指标混作缓存对照。
-# 跨版本热缓存比较时，应为相关版本另采相同 warm/形状/布局的报告。
-run_step ncu_v5_warm_full bash run.sh --mode ncu --build-dir "$BUILD_DIR" --gpu "$GPU" \
-  --variants v5 --layouts NT --profile-shape 4096x4096x4096 \
-  --ncu-set full --ncu-cache warm --ncu-clock none --launch-skip 50 --timeout 7200 \
-  --output-dir "$EXP_DIR/ncu_v5_warm_full"
-
-# 可选 CPU 提交/GPU 执行时间线；小矩阵表现异常时加 --with-nsys。
-if (( with_nsys )); then
-  run_step nsys_small_gemm bash run.sh --mode nsys --build-dir "$BUILD_DIR" --gpu "$GPU" \
-    --variants "$CORE" --layouts NT,TN --profile-shape 1024x1024x1024 \
-    --output-dir "$EXP_DIR/nsys_small_gemm"
-fi
 
 # 同步/内存诊断不参与成绩；失败时已经完成的计时/分析材料仍然保留。
 run_step sanitize bash run.sh --mode sanitize --build-dir "$BUILD_DIR" --gpu "$GPU" \
