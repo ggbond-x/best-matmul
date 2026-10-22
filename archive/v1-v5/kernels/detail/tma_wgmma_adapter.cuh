@@ -1,5 +1,5 @@
 #pragma once
-#include "../../host/common.cuh"
+#include "../../../../host/common.cuh"
 #include <cutlass/cluster_launch.hpp>
 
 // CPU 侧准备：形状/布局 -> TMA 描述符 -> 启动参数 -> launch 回调。
