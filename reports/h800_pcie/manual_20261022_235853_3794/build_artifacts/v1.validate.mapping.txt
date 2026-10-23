@@ -1,6 +1,0 @@
-Kernel: v1_baseline
-Selected GMMA instruction: SM90_64x128x16_F16F16F16_SS
-CTA tile: PEAK_CTA_M=128, PEAK_CTA_N=128, PEAK_CTA_K=64, PIPE=3
-WGMMA_MAX_INFLIGHT=1, EPILOGUE_COALESCED=0
-Producer threads=0, WGMMA compute threads=128 (1 warpgroups), CTA threads=128
-Mapping PASS: 128 compute threads cover 16384 output coordinates exactly once

@@ -1,3 +1,0 @@
-NVIDIA (R) Nsight Compute Command Line Profiler
-Copyright (c) 2018-2023 NVIDIA Corporation
-Version 2023.1.1.0 (build 32678585) (public-release)

@@ -1,1 +1,0 @@
-FAILED stage=validate exit=1

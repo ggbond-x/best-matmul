@@ -1,2 +1,0 @@
-mode=ncu
-variants=v3,v4,v5

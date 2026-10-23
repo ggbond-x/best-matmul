@@ -1,1 +1,0 @@
-timeout: failed to run command 'nsys': No such file or directory

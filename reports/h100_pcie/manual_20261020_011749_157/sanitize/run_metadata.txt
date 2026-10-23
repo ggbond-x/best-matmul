@@ -1,2 +1,0 @@
-mode=sanitize
-variants=v4,v5,v5_m256_t512
