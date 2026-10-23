@@ -1,0 +1,4 @@
+mode=env
+variants=all
+gpu=NVIDIA H800 PCIe
+uuid=GPU-89384b53-c02b-0f66-c2ab-b966923d789f

@@ -1,0 +1,4 @@
+mode=env
+variants=all
+gpu=NVIDIA GeForce RTX 3050 Laptop GPU
+uuid=GPU-d1c05bd2-cd25-6c0b-ec27-c030e13be825

@@ -1,0 +1,47 @@
+Kernel: v2_pipeline
+Selected GMMA instruction: SM90_64x128x16_F16F16F16_SS
+CTA tile: PEAK_CTA_M=128, PEAK_CTA_N=128, PEAK_CTA_K=64, PIPE=3
+WGMMA_MAX_INFLIGHT=2, EPILOGUE_COALESCED=0
+Producer threads=0, WGMMA compute threads=128 (1 warpgroups), CTA threads=128
+Mapping PASS: 128 compute threads cover 16384 output coordinates exactly once
+Full-output PASS: NT, input=0, K tiles=1, checked=65536
+Full-output PASS: NT, input=0, K tiles=2, checked=65536
+Full-output PASS: NT, input=0, K tiles=3, checked=65536
+Full-output PASS: NT, input=0, K tiles=4, checked=65536
+Full-output PASS: NT, input=0, K tiles=10, checked=65536
+Full-output PASS: NT, input=1, K tiles=1, checked=65536
+Full-output PASS: NT, input=1, K tiles=2, checked=65536
+Full-output PASS: NT, input=1, K tiles=3, checked=65536
+Full-output PASS: NT, input=1, K tiles=4, checked=65536
+Full-output PASS: NT, input=1, K tiles=10, checked=65536
+Full-output PASS: NT, input=2, K tiles=1, checked=65536
+Full-output PASS: NT, input=2, K tiles=2, checked=65536
+Full-output PASS: NT, input=2, K tiles=3, checked=65536
+Full-output PASS: NT, input=2, K tiles=4, checked=65536
+Full-output PASS: NT, input=2, K tiles=10, checked=65536
+Full-output PASS: NT, input=3, K tiles=1, checked=65536
+Full-output PASS: NT, input=3, K tiles=2, checked=65536
+Full-output PASS: NT, input=3, K tiles=3, checked=65536
+Full-output PASS: NT, input=3, K tiles=4, checked=65536
+Full-output PASS: NT, input=3, K tiles=10, checked=65536
+Full-output PASS: TN, input=0, K tiles=1, checked=65536
+Full-output PASS: TN, input=0, K tiles=2, checked=65536
+Full-output PASS: TN, input=0, K tiles=3, checked=65536
+Full-output PASS: TN, input=0, K tiles=4, checked=65536
+Full-output PASS: TN, input=0, K tiles=10, checked=65536
+Full-output PASS: TN, input=1, K tiles=1, checked=65536
+Full-output PASS: TN, input=1, K tiles=2, checked=65536
+Full-output PASS: TN, input=1, K tiles=3, checked=65536
+Full-output PASS: TN, input=1, K tiles=4, checked=65536
+Full-output PASS: TN, input=1, K tiles=10, checked=65536
+Full-output PASS: TN, input=2, K tiles=1, checked=65536
+Full-output PASS: TN, input=2, K tiles=2, checked=65536
+Full-output PASS: TN, input=2, K tiles=3, checked=65536
+Full-output PASS: TN, input=2, K tiles=4, checked=65536
+Full-output PASS: TN, input=2, K tiles=10, checked=65536
+Full-output PASS: TN, input=3, K tiles=1, checked=65536
+Full-output PASS: TN, input=3, K tiles=2, checked=65536
+Full-output PASS: TN, input=3, K tiles=3, checked=65536
+Full-output PASS: TN, input=3, K tiles=4, checked=65536
+Full-output PASS: TN, input=3, K tiles=10, checked=65536
+All full-output regressions PASS

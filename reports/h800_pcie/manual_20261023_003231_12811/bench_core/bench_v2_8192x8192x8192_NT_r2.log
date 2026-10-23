@@ -1,0 +1,38 @@
+Kernel: v2_pipeline
+Kernel header: /root/scg/best-matmul/kernels/wgmma_tma_fp16_pipeline_v2.cuh
+Device: NVIDIA H800 PCIe, SM count=114, compute capability=9.0
+Input mode: INPUT_MODE=2
+MIN_WARMUP=300, LAUNCHES_PER_BATCH=20, BATCHES=100
+Timer=event, scope=GPU event interval
+Problem: M=8192, N=8192, K=8192, mode=NT
+Selected GMMA instruction: SM90_64x128x16_F16F16F16_SS
+CTA tile: PEAK_CTA_M=128, PEAK_CTA_N=128, PEAK_CTA_K=64, PIPE=3
+WGMMA_MAX_INFLIGHT=2, EPILOGUE_COALESCED=0
+Producer threads=0, WGMMA compute threads=128 (1 warpgroups), CTA threads=128
+GPU state [start] PCI=0000:38:00.0
+timestamp, uuid, driver_version, pstate, temperature.gpu, power.draw [W], clocks.current.sm [MHz], clocks.current.memory [MHz], utilization.gpu [%], memory.used [MiB]
+2026/10/23 00:37:41.746, GPU-89384b53-c02b-0f66-c2ab-b966923d789f, 580.82.07, P0, 46, 63.60 W, 1755 MHz, 1593 MHz, 3 %, 845 MiB
+gpu_uuid, pid, process_name, used_gpu_memory [MiB]
+GPU-89384b53-c02b-0f66-c2ab-b966923d789f, 17791, /root/scg/best-matmul/build/h100_pcie/v2, 836 MiB
+Validation [precheck]: 16 sampled entries PASS, max_abs_error=0, checksum=-356748
+Warning: warmup did not reach a stable plateau; interpret results cautiously
+Warmup launches=700, plateau=not confirmed
+GPU state [end] PCI=0000:38:00.0
+timestamp, uuid, driver_version, pstate, temperature.gpu, power.draw [W], clocks.current.sm [MHz], clocks.current.memory [MHz], utilization.gpu [%], memory.used [MiB]
+2026/10/23 00:37:48.087, GPU-89384b53-c02b-0f66-c2ab-b966923d789f, 580.82.07, P0, 54, 342.84 W, 1395 MHz, 1593 MHz, 100 %, 845 MiB
+gpu_uuid, pid, process_name, used_gpu_memory [MiB]
+GPU-89384b53-c02b-0f66-c2ab-b966923d789f, 17791, /root/scg/best-matmul/build/h100_pcie/v2, 836 MiB
+Validation [postcheck]: 16 sampled entries PASS, max_abs_error=0, checksum=-356748
+Launch config: grid=(64,64,1), block=128, cluster=(1,1,1), smem=98432 bytes
+M=8192, N=8192, K=8192
+sample_scope=batch-average per-launch latency
+n_batches=100, launches_per_batch=20
+warmup_launches=700, warmup_stable=no
+elapsed_ms_measured_batches=4413.206863 ms
+p50_ms=2.193130 ms
+p99_ms=2.356408 ms
+min_ms=2.106170 ms
+max_ms=2.423850 ms
+TFLOPS_p50=501.343481
+TFLOPS_at_p99_latency=466.605012
+batch_drift_pct=3.082352 % (last/first quarter medians)

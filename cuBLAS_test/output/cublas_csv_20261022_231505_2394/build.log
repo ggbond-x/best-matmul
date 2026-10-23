@@ -1,0 +1,25 @@
+== Configure: nvcc=/usr/local/cuda-12.8/bin/nvcc arch=90 ==
+-- The CXX compiler identification is GNU 11.4.0
+-- The CUDA compiler identification is NVIDIA 12.8.93
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - done
+-- Check for working CUDA compiler: /usr/local/cuda-12.8/bin/nvcc - skipped
+-- Detecting CUDA compile features
+-- Detecting CUDA compile features - done
+-- Found Python3: /root/miniconda3/bin/python3.1 (found version "3.12.3") found components: Interpreter 
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /root/scg/best-matmul/cuBLAS_test/build_csv
+== Build: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench ==
+[ 16%] Building CXX object CMakeFiles/gemm_bench.dir/benchmark/main.cpp.o
+[ 33%] Building CXX object CMakeFiles/gemm_bench.dir/src/config.cpp.o
+[ 50%] Building CXX object CMakeFiles/gemm_bench.dir/src/cublaslt_gemm.cpp.o
+[ 83%] Building CUDA object CMakeFiles/gemm_bench.dir/src/data.cu.o
+[ 83%] Building CXX object CMakeFiles/gemm_bench.dir/src/cublas_gemm.cpp.o
+[100%] Linking CXX executable gemm_bench
+[100%] Built target gemm_bench

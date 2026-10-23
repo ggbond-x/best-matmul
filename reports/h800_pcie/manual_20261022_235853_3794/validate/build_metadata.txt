@@ -1,0 +1,64 @@
+build_utc=2026-10-22T15:58:53Z
+suite=all
+with_validation=1
+script_dir=/root/scg/best-matmul
+repo_root=/
+output_dir=/root/scg/best-matmul/build/h100_pcie
+cutlass_root=/root/scg/cutlass
+nvcc=/usr/local/cuda-12.8/bin/nvcc
+bash=5.1.16(1)-release
+
+[system]
+Linux autodl-container-c95a4e90fc-80c7a2f4 5.15.0-78-generic #85-Ubuntu SMP Fri Jul 7 15:25:09 UTC 2023 x86_64 x86_64 x86_64 GNU/Linux
+
+[nvcc --version]
+nvcc: NVIDIA (R) Cuda compiler driver
+Copyright (c) 2005-2025 NVIDIA Corporation
+Built on Fri_Feb_21_20:23:50_PST_2025
+Cuda compilation tools, release 12.8, V12.8.93
+Build cuda_12.8.r12.8/compiler.35583870_0
+
+[CUTLASS git root]
+/root/scg/cutlass
+
+[CUTLASS git HEAD]
+c16dc28b689c9a59f85626ed0f06c758a996f988
+
+[CUTLASS git branch]
+main
+
+[CUTLASS git status, tracked files]
+ M examples/cute/tutorial/hopper/CMakeLists.txt
+ M examples/cute/tutorial/hopper/wgmma_sm90.cu
+ M examples/cute/tutorial/hopper/wgmma_tma_sm90.cu
+ M examples/cute/tutorial/sgemm_sm80.cu
+ M include/cute/algorithm/copy.hpp
+ M include/cute/arch/copy.hpp
+ M include/cute/arch/util.hpp
+ M include/cute/atom/copy_atom.hpp
+ M include/cute/atom/copy_traits.hpp
+ M include/cute/atom/copy_traits_sm80.hpp
+ M include/cute/atom/mma_atom.hpp
+ M include/cute/atom/mma_traits_sm80.hpp
+ M include/cute/layout.hpp
+ M include/cutlass/cluster_launch.hpp
+
+[source sha256]
+e0e81129f802c7436cb122430ae45d504ebc9912b61b100d37d337fe39af1843  /root/scg/best-matmul/build.sh
+502929529b6f4a4b54e76e9db73c95238fa0b23665d09f2b27031475facbe778  /root/scg/best-matmul/build_benchmark.sh
+04b5062c49ebe765a1b521152b6c4c3cb01bb40b99f322743f327c71b60da5db  /root/scg/best-matmul/benchmark_host.cu
+71ee9ac84c0202f32a746d25ff26f724fa715e6b9d98dfc9a7165d708006e5a4  /root/scg/best-matmul/host/common.cuh
+6426e0df8f70fc07536de592ed455f67012f4c52a84f7f04ca779580901b9fc1  /root/scg/best-matmul/host/driver.cuh
+30372f73d45b6550147e39b05f558447d1e71b787b1704f52ce2dcbe9fd680b9  /root/scg/best-matmul/host/measurement.cuh
+bbb0ae065f1c94d74e32aaea55fd37084519bb653e2654464980e477cbf8fc12  /root/scg/best-matmul/host/validation.cuh
+2ab0ec0f092008d4d22998ba68dcac1ee01f123a0ab527e51e93400061ad5ad6  /root/scg/best-matmul/kernels/wgmma_tma_fp16_epilogue_v3.cuh
+2aee3c639f9e7be98986a1b5b6aab3f53b8d52c880770f3f3afbff9a447fa5f5  /root/scg/best-matmul/kernels/wgmma_tma_fp16_multi_warpgroup_v5.cuh
+7888f6068491a71873f1ec66d70ceef204cadc574540cf5a4e65c6bf79a224b8  /root/scg/best-matmul/kernels/wgmma_tma_fp16_pipeline_v2.cuh
+8768f375f7653923bbf95c01d7ea8e4aa8eaa6860d1e857eee77c61ce0de32a4  /root/scg/best-matmul/kernels/wgmma_tma_fp16_v1.cuh
+c09e67fb8da164328e85b52e37a80009e31c60c4fae3816827c00a2bc84bf0d5  /root/scg/best-matmul/kernels/wgmma_tma_fp16_warp_specialized_v4.cuh
+150726ec39dd63de5e09a6b426df0017a64f6e57e55a297b6e1561f34273db82  /root/scg/best-matmul/kernels/detail/tma_wgmma_adapter.cuh
+c08a95bd62ab52b3efaa8a8f8f0fa0e7e0f11d980df7995866651d32e47380a0  /root/scg/best-matmul/kernels/detail/tma_wgmma_device.cuh
+729119d4afbe316af34280dac5fca22d56a5f4c0c296af3e10657b713d2b2066  /root/scg/best-matmul/kernels/detail/tma_wgmma_warp_specialized_device.cuh
+e07a95dc5d2644b337a28d5c772ebd99ec5cf649c8069614d8ebbafbd10cfc39  /root/scg/best-matmul/kernels/detail/warp_specialized_config.cuh
+a0f93e7ae5181fa7b70ba3f6cd137732d99488611e94e6001db5aa119d8497bd  /root/scg/best-matmul/kernels/detail/wgmma_config.cuh
+915b68ba0f18be766d8def641e7b110880730fcce6f5a94e47858750ff1a384c  /root/scg/best-matmul/tests/full_output_validation.cu

@@ -1,0 +1,2 @@
+mode=disasm
+variants=all

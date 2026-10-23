@@ -1,0 +1,15 @@
+---------- --------------------------------------------------------------------------- ------- -----------------
+Identifier Sections                                                                    Enabled Estimated Metrics
+---------- --------------------------------------------------------------------------- ------- -----------------
+basic      LaunchStats, Occupancy, SpeedOfLight                                        yes     45               
+detailed   ComputeWorkloadAnalysis, LaunchStats, MemoryWorkloadAnalysis, MemoryWorkloa no      190              
+           dAnalysis_Chart, Occupancy, SourceCounters, SpeedOfLight, SpeedOfLight_Roof                          
+           lineChart                                                                                            
+full       ComputeWorkloadAnalysis, InstructionStats, LaunchStats, MemoryWorkloadAnaly no      239              
+           sis, MemoryWorkloadAnalysis_Chart, MemoryWorkloadAnalysis_Tables, NumaAffin                          
+           ity, Nvlink_Tables, Nvlink_Topology, Occupancy, SchedulerStats, SourceCount                          
+           ers, SpeedOfLight, SpeedOfLight_RooflineChart, WarpStateStats                                        
+nvlink     Nvlink, Nvlink_Tables, Nvlink_Topology                                      no      22               
+roofline   SpeedOfLight, SpeedOfLight_HierarchicalDoubleRooflineChart, SpeedOfLight_Hi no      56               
+           erarchicalHalfRooflineChart, SpeedOfLight_HierarchicalSingleRooflineChart,                           
+           SpeedOfLight_HierarchicalTensorRooflineChart, SpeedOfLight_RooflineChart                             

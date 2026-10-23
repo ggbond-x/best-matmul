@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+/usr/local/cuda-12.8/bin/nvcc -O3 -std=c++17 --expt-relaxed-constexpr -arch=sm_90a -I /root/scg/cutlass/include -I /root/scg/cutlass/tools/util/include -DGEMM_KERNEL_HEADER=\"/root/scg/best-matmul/kernels/wgmma_tma_fp16_multi_warpgroup_v5.cuh\" -lineinfo -Xptxas=-v -DPEAK_CTA_M=128 -DPEAK_CTA_N=128 -DPEAK_CTA_K=64 -DPIPE=3 -DGMMA_INST_N=128 -DWGMMA_COMPUTE_THREADS=256 -DWGMMA_MAX_INFLIGHT=2 -DEPILOGUE_COALESCED=1 /root/scg/best-matmul/tests/full_output_validation.cu -o /root/scg/best-matmul/build/h100_pcie/.v5.validate.tmp.3809 

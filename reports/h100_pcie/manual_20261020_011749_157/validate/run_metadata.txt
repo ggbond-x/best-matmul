@@ -1,0 +1,2 @@
+mode=validate
+variants=all

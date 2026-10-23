@@ -1,0 +1,37 @@
+Kernel: v4_warp_specialized
+Kernel header: /root/scg/best-matmul/kernels/wgmma_tma_fp16_warp_specialized_v4.cuh
+Device: NVIDIA H800 PCIe, SM count=114, compute capability=9.0
+Input mode: INPUT_MODE=2
+MIN_WARMUP=300, LAUNCHES_PER_BATCH=20, BATCHES=100
+Timer=event, scope=GPU event interval
+Problem: M=4096, N=4096, K=4096, mode=NT
+Selected GMMA instruction: SM90_64x128x16_F16F16F16_SS
+CTA tile: PEAK_CTA_M=128, PEAK_CTA_N=128, PEAK_CTA_K=64, PIPE=3
+WGMMA_MAX_INFLIGHT=2, EPILOGUE_COALESCED=1
+Producer threads=128, WGMMA compute threads=128 (1 warpgroups), CTA threads=256
+GPU state [start] PCI=0000:38:00.0
+timestamp, uuid, driver_version, pstate, temperature.gpu, power.draw [W], clocks.current.sm [MHz], clocks.current.memory [MHz], utilization.gpu [%], memory.used [MiB]
+2026/10/23 00:35:50.747, GPU-89384b53-c02b-0f66-c2ab-b966923d789f, 580.82.07, P0, 41, 85.31 W, 1755 MHz, 1593 MHz, 0 %, 557 MiB
+gpu_uuid, pid, process_name, used_gpu_memory [MiB]
+GPU-89384b53-c02b-0f66-c2ab-b966923d789f, 16386, /root/scg/best-matmul/build/h100_pcie/v4, 548 MiB
+Validation [precheck]: 16 sampled entries PASS, max_abs_error=0, checksum=-7724
+Warmup launches=400, plateau=stable
+GPU state [end] PCI=0000:38:00.0
+timestamp, uuid, driver_version, pstate, temperature.gpu, power.draw [W], clocks.current.sm [MHz], clocks.current.memory [MHz], utilization.gpu [%], memory.used [MiB]
+2026/10/23 00:35:51.821, GPU-89384b53-c02b-0f66-c2ab-b966923d789f, 580.82.07, P0, 47, 291.32 W, 1755 MHz, 1593 MHz, 100 %, 557 MiB
+gpu_uuid, pid, process_name, used_gpu_memory [MiB]
+GPU-89384b53-c02b-0f66-c2ab-b966923d789f, 16386, /root/scg/best-matmul/build/h100_pcie/v4, 548 MiB
+Validation [postcheck]: 16 sampled entries PASS, max_abs_error=0, checksum=-7724
+Launch config: grid=(32,32,1), block=256, cluster=(1,1,1), smem=98432 bytes
+M=4096, N=4096, K=4096
+sample_scope=batch-average per-launch latency
+n_batches=100, launches_per_batch=20
+warmup_launches=400, warmup_stable=yes
+elapsed_ms_measured_batches=754.980574 ms
+p50_ms=0.377437 ms
+p99_ms=0.378436 ms
+min_ms=0.376866 ms
+max_ms=0.378670 ms
+TFLOPS_p50=364.137656
+TFLOPS_at_p99_latency=363.176235
+batch_drift_pct=-0.022467 % (last/first quarter medians)

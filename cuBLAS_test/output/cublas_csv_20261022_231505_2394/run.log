@@ -1,0 +1,480 @@
+[1/96] CSV行=2 1024x1024x1024 NN fp16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 1024 --k 1024 --backend cublas --dtype fp16 --output-dtype same --layout column_major --transa N --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas FP16 1024x1024x1024 NN launch PASS mean=0.0145826 ms median=0.014624 ms min=0.013728 ms 147.264 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[2/96] CSV行=2 1024x1024x1024 NN fp16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 1024 --k 1024 --backend cublaslt --dtype fp16 --output-dtype same --layout column_major --transa N --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt FP16 1024x1024x1024 NN launch PASS mean=0.0138861 ms median=0.013888 ms min=0.012992 ms 154.65 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[3/96] CSV行=3 1024x1024x1024 NT fp16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 1024 --k 1024 --backend cublas --dtype fp16 --output-dtype same --layout column_major --transa N --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas FP16 1024x1024x1024 NT launch PASS mean=0.0154397 ms median=0.015456 ms min=0.014464 ms 139.089 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[4/96] CSV行=3 1024x1024x1024 NT fp16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 1024 --k 1024 --backend cublaslt --dtype fp16 --output-dtype same --layout column_major --transa N --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt FP16 1024x1024x1024 NT launch PASS mean=0.0148013 ms median=0.014848 ms min=0.013984 ms 145.088 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[5/96] CSV行=4 1024x1024x1024 TT fp16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 1024 --k 1024 --backend cublas --dtype fp16 --output-dtype same --layout column_major --transa T --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas FP16 1024x1024x1024 TT launch PASS mean=0.0147312 ms median=0.014752 ms min=0.013792 ms 145.778 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[6/96] CSV行=4 1024x1024x1024 TT fp16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 1024 --k 1024 --backend cublaslt --dtype fp16 --output-dtype same --layout column_major --transa T --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt FP16 1024x1024x1024 TT launch PASS mean=0.0138043 ms median=0.013824 ms min=0.012896 ms 155.566 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[7/96] CSV行=5 1024x1024x1024 TN fp16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 1024 --k 1024 --backend cublas --dtype fp16 --output-dtype same --layout column_major --transa T --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas FP16 1024x1024x1024 TN launch PASS mean=0.0146869 ms median=0.014688 ms min=0.013696 ms 146.218 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[8/96] CSV行=5 1024x1024x1024 TN fp16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 1024 --k 1024 --backend cublaslt --dtype fp16 --output-dtype same --layout column_major --transa T --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt FP16 1024x1024x1024 TN launch PASS mean=0.0135826 ms median=0.0136 ms min=0.012544 ms 158.106 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[9/96] CSV行=6 4096x4096x4096 NN fp16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 4096 --backend cublas --dtype fp16 --output-dtype same --layout column_major --transa N --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas FP16 4096x4096x4096 NN launch PASS mean=0.314995 ms median=0.308432 ms min=0.290496 ms 436.321 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[10/96] CSV行=6 4096x4096x4096 NN fp16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 4096 --backend cublaslt --dtype fp16 --output-dtype same --layout column_major --transa N --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt FP16 4096x4096x4096 NN launch PASS mean=0.307669 ms median=0.317792 ms min=0.289984 ms 446.71 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[11/96] CSV行=7 4096x4096x4096 NT fp16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 4096 --backend cublas --dtype fp16 --output-dtype same --layout column_major --transa N --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas FP16 4096x4096x4096 NT launch PASS mean=0.301384 ms median=0.293328 ms min=0.289536 ms 456.026 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[12/96] CSV行=7 4096x4096x4096 NT fp16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 4096 --backend cublaslt --dtype fp16 --output-dtype same --layout column_major --transa N --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt FP16 4096x4096x4096 NT launch PASS mean=0.313146 ms median=0.323376 ms min=0.28256 ms 438.897 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[13/96] CSV行=8 4096x4096x4096 TT fp16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 4096 --backend cublas --dtype fp16 --output-dtype same --layout column_major --transa T --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas FP16 4096x4096x4096 TT launch PASS mean=0.305699 ms median=0.297168 ms min=0.291008 ms 449.589 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[14/96] CSV行=8 4096x4096x4096 TT fp16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 4096 --backend cublaslt --dtype fp16 --output-dtype same --layout column_major --transa T --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt FP16 4096x4096x4096 TT launch PASS mean=0.299173 ms median=0.293456 ms min=0.283552 ms 459.397 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[15/96] CSV行=9 4096x4096x4096 TN fp16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 4096 --backend cublas --dtype fp16 --output-dtype same --layout column_major --transa T --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas FP16 4096x4096x4096 TN launch PASS mean=0.319706 ms median=0.327536 ms min=0.290816 ms 429.892 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[16/96] CSV行=9 4096x4096x4096 TN fp16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 4096 --backend cublaslt --dtype fp16 --output-dtype same --layout column_major --transa T --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt FP16 4096x4096x4096 TN launch PASS mean=0.304453 ms median=0.308992 ms min=0.283616 ms 451.43 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[17/96] CSV行=10 8192x8192x8192 NN fp16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 8192 --n 8192 --k 8192 --backend cublas --dtype fp16 --output-dtype same --layout column_major --transa N --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas FP16 8192x8192x8192 NN launch PASS mean=2.33198 ms median=2.33142 ms min=2.30896 ms 471.492 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[18/96] CSV行=10 8192x8192x8192 NN fp16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 8192 --n 8192 --k 8192 --backend cublaslt --dtype fp16 --output-dtype same --layout column_major --transa N --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt FP16 8192x8192x8192 NN launch PASS mean=2.37879 ms median=2.37269 ms min=2.33389 ms 462.214 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[19/96] CSV行=11 8192x8192x8192 NT fp16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 8192 --n 8192 --k 8192 --backend cublas --dtype fp16 --output-dtype same --layout column_major --transa N --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas FP16 8192x8192x8192 NT launch PASS mean=2.36547 ms median=2.33685 ms min=2.13731 ms 464.817 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[20/96] CSV行=11 8192x8192x8192 NT fp16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 8192 --n 8192 --k 8192 --backend cublaslt --dtype fp16 --output-dtype same --layout column_major --transa N --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt FP16 8192x8192x8192 NT launch PASS mean=2.35745 ms median=2.35387 ms min=2.35046 ms 466.398 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[21/96] CSV行=12 8192x8192x8192 TT fp16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 8192 --n 8192 --k 8192 --backend cublas --dtype fp16 --output-dtype same --layout column_major --transa T --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas FP16 8192x8192x8192 TT launch PASS mean=2.48066 ms median=2.3593 ms min=2.21347 ms 443.234 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[22/96] CSV行=12 8192x8192x8192 TT fp16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 8192 --n 8192 --k 8192 --backend cublaslt --dtype fp16 --output-dtype same --layout column_major --transa T --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt FP16 8192x8192x8192 TT launch PASS mean=2.36017 ms median=2.34202 ms min=2.30202 ms 465.861 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[23/96] CSV行=13 8192x8192x8192 TN fp16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 8192 --n 8192 --k 8192 --backend cublas --dtype fp16 --output-dtype same --layout column_major --transa T --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas FP16 8192x8192x8192 TN launch PASS mean=2.41678 ms median=2.4079 ms min=2.33712 ms 454.949 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[24/96] CSV行=13 8192x8192x8192 TN fp16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 8192 --n 8192 --k 8192 --backend cublaslt --dtype fp16 --output-dtype same --layout column_major --transa T --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt FP16 8192x8192x8192 TN launch PASS mean=2.33601 ms median=2.34413 ms min=2.21558 ms 470.68 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[25/96] CSV行=14 16384x1024x4096 NN fp16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 16384 --n 1024 --k 4096 --backend cublas --dtype fp16 --output-dtype same --layout column_major --transa N --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas FP16 16384x1024x4096 NN launch PASS mean=0.304509 ms median=0.30368 ms min=0.297056 ms 451.346 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[26/96] CSV行=14 16384x1024x4096 NN fp16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 16384 --n 1024 --k 4096 --backend cublaslt --dtype fp16 --output-dtype same --layout column_major --transa N --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt FP16 16384x1024x4096 NN launch PASS mean=0.322732 ms median=0.324208 ms min=0.297504 ms 425.861 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[27/96] CSV行=15 16384x1024x4096 NT fp16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 16384 --n 1024 --k 4096 --backend cublas --dtype fp16 --output-dtype same --layout column_major --transa N --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas FP16 16384x1024x4096 NT launch PASS mean=0.318628 ms median=0.325344 ms min=0.298304 ms 431.346 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[28/96] CSV行=15 16384x1024x4096 NT fp16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 16384 --n 1024 --k 4096 --backend cublaslt --dtype fp16 --output-dtype same --layout column_major --transa N --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt FP16 16384x1024x4096 NT launch PASS mean=0.321743 ms median=0.296736 ms min=0.272288 ms 427.171 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[29/96] CSV行=16 16384x1024x4096 TT fp16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 16384 --n 1024 --k 4096 --backend cublas --dtype fp16 --output-dtype same --layout column_major --transa T --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas FP16 16384x1024x4096 TT launch PASS mean=0.312328 ms median=0.315776 ms min=0.296256 ms 440.048 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[30/96] CSV行=16 16384x1024x4096 TT fp16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 16384 --n 1024 --k 4096 --backend cublaslt --dtype fp16 --output-dtype same --layout column_major --transa T --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt FP16 16384x1024x4096 TT launch PASS mean=0.34415 ms median=0.370352 ms min=0.267744 ms 399.357 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[31/96] CSV行=17 16384x1024x4096 TN fp16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 16384 --n 1024 --k 4096 --backend cublas --dtype fp16 --output-dtype same --layout column_major --transa T --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas FP16 16384x1024x4096 TN launch PASS mean=0.323714 ms median=0.315312 ms min=0.29824 ms 424.569 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[32/96] CSV行=17 16384x1024x4096 TN fp16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 16384 --n 1024 --k 4096 --backend cublaslt --dtype fp16 --output-dtype same --layout column_major --transa T --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt FP16 16384x1024x4096 TN launch PASS mean=0.303754 ms median=0.304832 ms min=0.286688 ms 452.468 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[33/96] CSV行=18 1024x16384x4096 NN fp16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 16384 --k 4096 --backend cublas --dtype fp16 --output-dtype same --layout column_major --transa N --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas FP16 1024x16384x4096 NN launch PASS mean=0.304729 ms median=0.29216 ms min=0.286848 ms 451.021 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[34/96] CSV行=18 1024x16384x4096 NN fp16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 16384 --k 4096 --backend cublaslt --dtype fp16 --output-dtype same --layout column_major --transa N --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt FP16 1024x16384x4096 NN launch PASS mean=0.301736 ms median=0.29704 ms min=0.281024 ms 455.494 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[35/96] CSV行=19 1024x16384x4096 NT fp16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 16384 --k 4096 --backend cublas --dtype fp16 --output-dtype same --layout column_major --transa N --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas FP16 1024x16384x4096 NT launch PASS mean=0.3129 ms median=0.320752 ms min=0.28688 ms 439.242 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[36/96] CSV行=19 1024x16384x4096 NT fp16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 16384 --k 4096 --backend cublaslt --dtype fp16 --output-dtype same --layout column_major --transa N --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt FP16 1024x16384x4096 NT launch PASS mean=0.306894 ms median=0.31272 ms min=0.285664 ms 447.839 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[37/96] CSV行=20 1024x16384x4096 TT fp16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 16384 --k 4096 --backend cublas --dtype fp16 --output-dtype same --layout column_major --transa T --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas FP16 1024x16384x4096 TT launch PASS mean=0.310532 ms median=0.305536 ms min=0.29152 ms 442.592 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[38/96] CSV行=20 1024x16384x4096 TT fp16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 16384 --k 4096 --backend cublaslt --dtype fp16 --output-dtype same --layout column_major --transa T --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt FP16 1024x16384x4096 TT launch PASS mean=0.314553 ms median=0.301632 ms min=0.280736 ms 436.934 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[39/96] CSV行=21 1024x16384x4096 TN fp16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 16384 --k 4096 --backend cublas --dtype fp16 --output-dtype same --layout column_major --transa T --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas FP16 1024x16384x4096 TN launch PASS mean=0.311916 ms median=0.303552 ms min=0.283072 ms 440.629 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[40/96] CSV行=21 1024x16384x4096 TN fp16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 16384 --k 4096 --backend cublaslt --dtype fp16 --output-dtype same --layout column_major --transa T --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt FP16 1024x16384x4096 TN launch PASS mean=0.302662 ms median=0.311136 ms min=0.28256 ms 454.101 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[41/96] CSV行=22 4096x4096x256 NN fp16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 256 --backend cublas --dtype fp16 --output-dtype same --layout column_major --transa N --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas FP16 4096x4096x256 NN launch PASS mean=0.0358029 ms median=0.035744 ms min=0.034304 ms 239.923 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[42/96] CSV行=22 4096x4096x256 NN fp16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 256 --backend cublaslt --dtype fp16 --output-dtype same --layout column_major --transa N --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt FP16 4096x4096x256 NN launch PASS mean=0.0308733 ms median=0.030672 ms min=0.029248 ms 278.232 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[43/96] CSV行=23 4096x4096x256 NT fp16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 256 --backend cublas --dtype fp16 --output-dtype same --layout column_major --transa N --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas FP16 4096x4096x256 NT launch PASS mean=0.0349938 ms median=0.03488 ms min=0.033312 ms 245.47 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[44/96] CSV行=23 4096x4096x256 NT fp16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 256 --backend cublaslt --dtype fp16 --output-dtype same --layout column_major --transa N --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt FP16 4096x4096x256 NT launch PASS mean=0.0306254 ms median=0.030496 ms min=0.029472 ms 280.484 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[45/96] CSV行=24 4096x4096x256 TT fp16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 256 --backend cublas --dtype fp16 --output-dtype same --layout column_major --transa T --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas FP16 4096x4096x256 TT launch PASS mean=0.0351789 ms median=0.035152 ms min=0.03376 ms 244.179 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[46/96] CSV行=24 4096x4096x256 TT fp16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 256 --backend cublaslt --dtype fp16 --output-dtype same --layout column_major --transa T --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt FP16 4096x4096x256 TT launch PASS mean=0.0315314 ms median=0.031344 ms min=0.030208 ms 272.425 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[47/96] CSV行=25 4096x4096x256 TN fp16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 256 --backend cublas --dtype fp16 --output-dtype same --layout column_major --transa T --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas FP16 4096x4096x256 TN launch PASS mean=0.0353437 ms median=0.03536 ms min=0.033024 ms 243.04 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[48/96] CSV行=25 4096x4096x256 TN fp16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 256 --backend cublaslt --dtype fp16 --output-dtype same --layout column_major --transa T --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt FP16 4096x4096x256 TN launch PASS mean=0.0306938 ms median=0.030624 ms min=0.028864 ms 279.859 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[49/96] CSV行=26 1024x1024x1024 NN bf16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 1024 --k 1024 --backend cublas --dtype bf16 --output-dtype same --layout column_major --transa N --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas BF16 1024x1024x1024 NN launch PASS mean=0.0148614 ms median=0.01488 ms min=0.0136 ms 144.5 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[50/96] CSV行=26 1024x1024x1024 NN bf16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 1024 --k 1024 --backend cublaslt --dtype bf16 --output-dtype same --layout column_major --transa N --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt BF16 1024x1024x1024 NN launch PASS mean=0.0140291 ms median=0.014048 ms min=0.013152 ms 153.073 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[51/96] CSV行=27 1024x1024x1024 NT bf16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 1024 --k 1024 --backend cublas --dtype bf16 --output-dtype same --layout column_major --transa N --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas BF16 1024x1024x1024 NT launch PASS mean=0.0157798 ms median=0.015808 ms min=0.014976 ms 136.09 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[52/96] CSV行=27 1024x1024x1024 NT bf16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 1024 --k 1024 --backend cublaslt --dtype bf16 --output-dtype same --layout column_major --transa N --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt BF16 1024x1024x1024 NT launch PASS mean=0.0149549 ms median=0.014976 ms min=0.01408 ms 143.598 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[53/96] CSV行=28 1024x1024x1024 TT bf16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 1024 --k 1024 --backend cublas --dtype bf16 --output-dtype same --layout column_major --transa T --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas BF16 1024x1024x1024 TT launch PASS mean=0.0148264 ms median=0.01488 ms min=0.013888 ms 144.842 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[54/96] CSV行=28 1024x1024x1024 TT bf16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 1024 --k 1024 --backend cublaslt --dtype bf16 --output-dtype same --layout column_major --transa T --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt BF16 1024x1024x1024 TT launch PASS mean=0.0139045 ms median=0.013952 ms min=0.013056 ms 154.445 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[55/96] CSV行=29 1024x1024x1024 TN bf16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 1024 --k 1024 --backend cublas --dtype bf16 --output-dtype same --layout column_major --transa T --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas BF16 1024x1024x1024 TN launch PASS mean=0.0148904 ms median=0.014912 ms min=0.013984 ms 144.219 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[56/96] CSV行=29 1024x1024x1024 TN bf16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 1024 --k 1024 --backend cublaslt --dtype bf16 --output-dtype same --layout column_major --transa T --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt BF16 1024x1024x1024 TN launch PASS mean=0.0139117 ms median=0.01392 ms min=0.012864 ms 154.366 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[57/96] CSV行=30 4096x4096x4096 NN bf16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 4096 --backend cublas --dtype bf16 --output-dtype same --layout column_major --transa N --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas BF16 4096x4096x4096 NN launch PASS mean=0.29141 ms median=0.290704 ms min=0.274272 ms 471.635 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[58/96] CSV行=30 4096x4096x4096 NN bf16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 4096 --backend cublaslt --dtype bf16 --output-dtype same --layout column_major --transa N --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt BF16 4096x4096x4096 NN launch PASS mean=0.287625 ms median=0.291552 ms min=0.267904 ms 477.841 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[59/96] CSV行=31 4096x4096x4096 NT bf16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 4096 --backend cublas --dtype bf16 --output-dtype same --layout column_major --transa N --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas BF16 4096x4096x4096 NT launch PASS mean=0.292781 ms median=0.29584 ms min=0.271968 ms 469.426 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[60/96] CSV行=31 4096x4096x4096 NT bf16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 4096 --backend cublaslt --dtype bf16 --output-dtype same --layout column_major --transa N --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt BF16 4096x4096x4096 NT launch PASS mean=0.287958 ms median=0.297984 ms min=0.263872 ms 477.288 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[61/96] CSV行=32 4096x4096x4096 TT bf16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 4096 --backend cublas --dtype bf16 --output-dtype same --layout column_major --transa T --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas BF16 4096x4096x4096 TT launch PASS mean=0.295838 ms median=0.28704 ms min=0.275264 ms 464.576 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[62/96] CSV行=32 4096x4096x4096 TT bf16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 4096 --backend cublaslt --dtype bf16 --output-dtype same --layout column_major --transa T --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt BF16 4096x4096x4096 TT launch PASS mean=0.283361 ms median=0.273376 ms min=0.268 ms 485.031 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[63/96] CSV行=33 4096x4096x4096 TN bf16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 4096 --backend cublas --dtype bf16 --output-dtype same --layout column_major --transa T --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas BF16 4096x4096x4096 TN launch PASS mean=0.299184 ms median=0.298528 ms min=0.275648 ms 459.379 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[64/96] CSV行=33 4096x4096x4096 TN bf16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 4096 --backend cublaslt --dtype bf16 --output-dtype same --layout column_major --transa T --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt BF16 4096x4096x4096 TN launch PASS mean=0.285566 ms median=0.275552 ms min=0.266624 ms 481.286 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[65/96] CSV行=34 8192x8192x8192 NN bf16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 8192 --n 8192 --k 8192 --backend cublas --dtype bf16 --output-dtype same --layout column_major --transa N --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas BF16 8192x8192x8192 NN launch PASS mean=2.2543 ms median=2.24152 ms min=2.15312 ms 487.739 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[66/96] CSV行=34 8192x8192x8192 NN bf16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 8192 --n 8192 --k 8192 --backend cublaslt --dtype bf16 --output-dtype same --layout column_major --transa N --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt BF16 8192x8192x8192 NN launch PASS mean=2.27469 ms median=2.24266 ms min=2.15834 ms 483.368 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[67/96] CSV行=35 8192x8192x8192 NT bf16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 8192 --n 8192 --k 8192 --backend cublas --dtype bf16 --output-dtype same --layout column_major --transa N --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas BF16 8192x8192x8192 NT launch PASS mean=2.22664 ms median=2.25109 ms min=2.03683 ms 493.798 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[68/96] CSV行=35 8192x8192x8192 NT bf16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 8192 --n 8192 --k 8192 --backend cublaslt --dtype bf16 --output-dtype same --layout column_major --transa N --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt BF16 8192x8192x8192 NT launch PASS mean=2.24719 ms median=2.22429 ms min=2.20998 ms 489.283 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[69/96] CSV行=36 8192x8192x8192 TT bf16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 8192 --n 8192 --k 8192 --backend cublas --dtype bf16 --output-dtype same --layout column_major --transa T --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas BF16 8192x8192x8192 TT launch PASS mean=2.26226 ms median=2.2507 ms min=2.16822 ms 486.024 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[70/96] CSV行=36 8192x8192x8192 TT bf16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 8192 --n 8192 --k 8192 --backend cublaslt --dtype bf16 --output-dtype same --layout column_major --transa T --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt BF16 8192x8192x8192 TT launch PASS mean=2.34999 ms median=2.35123 ms min=2.27491 ms 467.88 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[71/96] CSV行=37 8192x8192x8192 TN bf16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 8192 --n 8192 --k 8192 --backend cublas --dtype bf16 --output-dtype same --layout column_major --transa T --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas BF16 8192x8192x8192 TN launch PASS mean=2.26833 ms median=2.24549 ms min=2.1551 ms 484.722 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[72/96] CSV行=37 8192x8192x8192 TN bf16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 8192 --n 8192 --k 8192 --backend cublaslt --dtype bf16 --output-dtype same --layout column_major --transa T --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt BF16 8192x8192x8192 TN launch PASS mean=2.32452 ms median=2.32118 ms min=2.25213 ms 473.006 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[73/96] CSV行=38 16384x1024x4096 NN bf16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 16384 --n 1024 --k 4096 --backend cublas --dtype bf16 --output-dtype same --layout column_major --transa N --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas BF16 16384x1024x4096 NN launch PASS mean=0.298882 ms median=0.29928 ms min=0.278144 ms 459.843 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[74/96] CSV行=38 16384x1024x4096 NN bf16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 16384 --n 1024 --k 4096 --backend cublaslt --dtype bf16 --output-dtype same --layout column_major --transa N --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt BF16 16384x1024x4096 NN launch PASS mean=0.287403 ms median=0.289024 ms min=0.264448 ms 478.21 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[75/96] CSV行=39 16384x1024x4096 NT bf16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 16384 --n 1024 --k 4096 --backend cublas --dtype bf16 --output-dtype same --layout column_major --transa N --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas BF16 16384x1024x4096 NT launch PASS mean=0.299596 ms median=0.303664 ms min=0.279744 ms 458.748 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[76/96] CSV行=39 16384x1024x4096 NT bf16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 16384 --n 1024 --k 4096 --backend cublaslt --dtype bf16 --output-dtype same --layout column_major --transa N --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt BF16 16384x1024x4096 NT launch PASS mean=0.27695 ms median=0.282496 ms min=0.261024 ms 496.259 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[77/96] CSV行=40 16384x1024x4096 TT bf16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 16384 --n 1024 --k 4096 --backend cublas --dtype bf16 --output-dtype same --layout column_major --transa T --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas BF16 16384x1024x4096 TT launch PASS mean=0.301788 ms median=0.303152 ms min=0.280672 ms 455.415 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[78/96] CSV行=40 16384x1024x4096 TT bf16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 16384 --n 1024 --k 4096 --backend cublaslt --dtype bf16 --output-dtype same --layout column_major --transa T --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt BF16 16384x1024x4096 TT launch PASS mean=0.281575 ms median=0.28744 ms min=0.267264 ms 488.107 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[79/96] CSV行=41 16384x1024x4096 TN bf16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 16384 --n 1024 --k 4096 --backend cublas --dtype bf16 --output-dtype same --layout column_major --transa T --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas BF16 16384x1024x4096 TN launch PASS mean=0.304633 ms median=0.3092 ms min=0.28144 ms 451.162 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[80/96] CSV行=41 16384x1024x4096 TN bf16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 16384 --n 1024 --k 4096 --backend cublaslt --dtype bf16 --output-dtype same --layout column_major --transa T --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt BF16 16384x1024x4096 TN launch PASS mean=0.293348 ms median=0.302048 ms min=0.268416 ms 468.518 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[81/96] CSV行=42 1024x16384x4096 NN bf16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 16384 --k 4096 --backend cublas --dtype bf16 --output-dtype same --layout column_major --transa N --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas BF16 1024x16384x4096 NN launch PASS mean=0.290251 ms median=0.291552 ms min=0.27344 ms 473.517 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[82/96] CSV行=42 1024x16384x4096 NN bf16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 16384 --k 4096 --backend cublaslt --dtype bf16 --output-dtype same --layout column_major --transa N --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt BF16 1024x16384x4096 NN launch PASS mean=0.289653 ms median=0.29384 ms min=0.266816 ms 474.495 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[83/96] CSV行=43 1024x16384x4096 NT bf16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 16384 --k 4096 --backend cublas --dtype bf16 --output-dtype same --layout column_major --transa N --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas BF16 1024x16384x4096 NT launch PASS mean=0.292499 ms median=0.286512 ms min=0.273088 ms 469.878 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[84/96] CSV行=43 1024x16384x4096 NT bf16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 16384 --k 4096 --backend cublaslt --dtype bf16 --output-dtype same --layout column_major --transa N --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt BF16 1024x16384x4096 NT launch PASS mean=0.285396 ms median=0.294784 ms min=0.261728 ms 481.573 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[85/96] CSV行=44 1024x16384x4096 TT bf16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 16384 --k 4096 --backend cublas --dtype bf16 --output-dtype same --layout column_major --transa T --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas BF16 1024x16384x4096 TT launch PASS mean=0.295617 ms median=0.284272 ms min=0.276224 ms 464.922 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[86/96] CSV行=44 1024x16384x4096 TT bf16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 16384 --k 4096 --backend cublaslt --dtype bf16 --output-dtype same --layout column_major --transa T --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt BF16 1024x16384x4096 TT launch PASS mean=0.28516 ms median=0.295552 ms min=0.2496 ms 481.971 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[87/96] CSV行=45 1024x16384x4096 TN bf16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 16384 --k 4096 --backend cublas --dtype bf16 --output-dtype same --layout column_major --transa T --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas BF16 1024x16384x4096 TN launch PASS mean=0.292357 ms median=0.278256 ms min=0.274624 ms 470.106 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[88/96] CSV行=45 1024x16384x4096 TN bf16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 1024 --n 16384 --k 4096 --backend cublaslt --dtype bf16 --output-dtype same --layout column_major --transa T --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt BF16 1024x16384x4096 TN launch PASS mean=0.291543 ms median=0.300736 ms min=0.262912 ms 471.42 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[89/96] CSV行=46 4096x4096x256 NN bf16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 256 --backend cublas --dtype bf16 --output-dtype same --layout column_major --transa N --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas BF16 4096x4096x256 NN launch PASS mean=0.0348829 ms median=0.034848 ms min=0.032928 ms 246.251 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[90/96] CSV行=46 4096x4096x256 NN bf16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 256 --backend cublaslt --dtype bf16 --output-dtype same --layout column_major --transa N --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt BF16 4096x4096x256 NN launch PASS mean=0.0307602 ms median=0.030752 ms min=0.029248 ms 279.255 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[91/96] CSV行=47 4096x4096x256 NT bf16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 256 --backend cublas --dtype bf16 --output-dtype same --layout column_major --transa N --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas BF16 4096x4096x256 NT launch PASS mean=0.0356461 ms median=0.0356 ms min=0.034272 ms 240.978 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[92/96] CSV行=47 4096x4096x256 NT bf16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 256 --backend cublaslt --dtype bf16 --output-dtype same --layout column_major --transa N --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt BF16 4096x4096x256 NT launch PASS mean=0.030893 ms median=0.0308 ms min=0.029184 ms 278.055 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[93/96] CSV行=48 4096x4096x256 TT bf16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 256 --backend cublas --dtype bf16 --output-dtype same --layout column_major --transa T --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas BF16 4096x4096x256 TT launch PASS mean=0.0357926 ms median=0.035712 ms min=0.034624 ms 239.992 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[94/96] CSV行=48 4096x4096x256 TT bf16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 256 --backend cublaslt --dtype bf16 --output-dtype same --layout column_major --transa T --transb T --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt BF16 4096x4096x256 TT launch PASS mean=0.0306304 ms median=0.030496 ms min=0.029344 ms 280.438 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[95/96] CSV行=49 4096x4096x256 TN bf16 cublas
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 256 --backend cublas --dtype bf16 --output-dtype same --layout column_major --transa T --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublas BF16 4096x4096x256 TN launch PASS mean=0.0352067 ms median=0.035168 ms min=0.034016 ms 243.986 TFLOPS
+PASS=1 FAIL=0 SKIP=0
+[96/96] CSV行=49 4096x4096x256 TN bf16 cublaslt
+CMD: /root/scg/best-matmul/cuBLAS_test/build_csv/gemm_bench --m 4096 --n 4096 --k 256 --backend cublaslt --dtype bf16 --output-dtype same --layout column_major --transa T --transb N --alpha 1 --beta 0 --mode launch --warmup 50 --repeats 200 --inner 1 --workspace-mb 32 --device 0 --seed 1234 --check-samples 512 --csv /root/scg/best-matmul/cuBLAS_test/outptu/cublas_csv_20261022_231505_2394/raw_results.csv --lt-selection tune --lt-candidates 32
+GPU: NVIDIA H800 PCIe | SM 90 | CUDA runtime 12080 | cuBLAS 120804
+cublaslt BF16 4096x4096x256 TN launch PASS mean=0.0304478 ms median=0.030384 ms min=0.029088 ms 282.12 TFLOPS
+PASS=1 FAIL=0 SKIP=0
