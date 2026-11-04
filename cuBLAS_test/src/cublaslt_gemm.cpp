@@ -42,6 +42,13 @@ std::string describe(const cublasLtMatmulAlgo_t& algo) {
    <<";reduction="<<attribute(algo,CUBLASLT_ALGO_CONFIG_REDUCTION_SCHEME)
    <<";swizzle="<<attribute(algo,CUBLASLT_ALGO_CONFIG_CTA_SWIZZLING)
    <<";custom="<<attribute(algo,CUBLASLT_ALGO_CONFIG_CUSTOM_OPTION);
+#if CUDART_VERSION >= 12000
+  // Query the selected algorithm; never assume a cluster combination is legal.
+  std::uint16_t cluster=0;std::size_t cluster_written=0;
+  if(cublasLtMatmulAlgoConfigGetAttribute(&algo,CUBLASLT_ALGO_CONFIG_CLUSTER_SHAPE_ID,
+      &cluster,sizeof(cluster),&cluster_written)==CUBLAS_STATUS_SUCCESS)
+    s<<";cluster_id="<<cluster;
+#endif
   std::uint64_t flags=0;std::size_t written=0;
   auto status=cublasLtMatmulAlgoCapGetAttribute(&algo,CUBLASLT_ALGO_CAP_NUMERICAL_IMPL_FLAGS,&flags,sizeof(flags),&written);
   if(status==CUBLAS_STATUS_SUCCESS) s<<";numeric_flags="<<flags;
@@ -95,7 +102,7 @@ class LtPlan final : public GemmPlan {
   }
  public:
   LtPlan(const Config& c,const void* a,const void* b,void* out,const void* initial,
-         std::size_t out_bytes,cudaStream_t stream)
+         std::size_t out_bytes,cudaStream_t stream,LtValidator validator)
     : workspace_(c.workspace),c_(c),a_(a),b_(b),initial_(initial),out_(out),out_bytes_(out_bytes),stream_(stream) {
     BLAS_CHECK(cublasLtMatmulDescCreate(&desc_.v,compute_type(c),CUDA_R_32F));
     cublasOperation_t ta=c.ta?CUBLAS_OP_T:CUBLAS_OP_N,tb=c.tb?CUBLAS_OP_T:CUBLAS_OP_N;
@@ -137,7 +144,15 @@ class LtPlan final : public GemmPlan {
       reset();status=enqueue(); // Untimed probe: actual addresses can limit an algo.
       if(status==CUBLAS_STATUS_NOT_SUPPORTED) continue;
       BLAS_CHECK(status);CUDA_CHECK(cudaStreamSynchronize(stream_));
+      AlgorithmInfo trial;
+      trial.description=describe(algo_);trial.heuristic_index=i;
+      trial.workspace_used=checked.workspaceSize;trial.candidates=found;
+      if(validator && !validator(trial)) {
+        info.trials.push_back({i,trial.description,"CORRECTNESS_FAIL",checked.workspaceSize,0});
+        continue;
+      }
       double score=c.lt_selection=="tune"?tune():0;
+      info.trials.push_back({i,trial.description,validator?"VALIDATED":"NOT_CHECKED",checked.workspaceSize,score});
       if(score<best) {
         best=score;chosen=algo_;selected=true;
         info.heuristic_index=i;info.workspace_used=checked.workspaceSize;
@@ -150,8 +165,8 @@ class LtPlan final : public GemmPlan {
   void run() override { BLAS_CHECK(enqueue()); }
 };
 std::unique_ptr<GemmPlan> make_cublaslt(const Config& c,const void* a,const void* b,void* out,
-                                      const void* initial,std::size_t bytes,cudaStream_t s) {
-  return std::make_unique<LtPlan>(c,a,b,out,initial,bytes,s);
+                                      const void* initial,std::size_t bytes,cudaStream_t s,LtValidator validator) {
+  return std::make_unique<LtPlan>(c,a,b,out,initial,bytes,s,std::move(validator));
 }
 }
 

@@ -52,3 +52,16 @@ if(Python3_Interpreter_FOUND)
     set_tests_properties(gpu_regression PROPERTIES SKIP_RETURN_CODE 3)
   endif()
 endif()
+
+# Independent peak/telemetry entry; the legacy CLI remains unchanged.
+add_executable(h800_peak_bench src/h800_peak.cu src/config.cpp src/cublas_gemm.cpp src/cublaslt_gemm.cpp)
+target_include_directories(h800_peak_bench PRIVATE include "${GEMM_CUDA_INCLUDE}")
+target_link_libraries(h800_peak_bench PRIVATE "${GEMM_cudart_LIBRARY}" "${GEMM_cublas_LIBRARY}" "${GEMM_cublasLt_LIBRARY}")
+foreach(arch IN LISTS GEMM_CUDA_ARCHITECTURES)
+  target_compile_options(h800_peak_bench PRIVATE "$<$<COMPILE_LANGUAGE:CUDA>:-gencode=arch=compute_${arch},code=sm_${arch}>")
+endforeach()
+target_compile_options(h800_peak_bench PRIVATE "$<$<COMPILE_LANGUAGE:CUDA>:-lineinfo>")
+
+if(Python3_Interpreter_FOUND)
+  add_test(NAME h800_peak_analysis COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_h800_peak.py")
+endif()

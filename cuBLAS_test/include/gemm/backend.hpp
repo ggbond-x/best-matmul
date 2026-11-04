@@ -4,11 +4,19 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <functional>
 namespace gemm {
+struct AlgorithmTrial {
+  int index=-1;
+  std::string description, status;
+  std::size_t workspace=0;
+  double median_ms=0;
+};
 struct AlgorithmInfo {
   std::string description="not_selected";
   int heuristic_index=-1, candidates=0;
   std::size_t workspace_used=0;
+  std::vector<AlgorithmTrial> trials;
 };
 // Constructors prepare handles, descriptors, workspace and selection.
 // run() only enqueues GEMM on the supplied stream. Both backends use C==D.
@@ -19,7 +27,8 @@ class GemmPlan {
   AlgorithmInfo info;
 };
 std::unique_ptr<GemmPlan> make_cublas(const Config&,const void*,const void*,void*,cudaStream_t);
-std::unique_ptr<GemmPlan> make_cublaslt(const Config&,const void*,const void*,void*,const void*,std::size_t,cudaStream_t);
+using LtValidator = std::function<bool(const AlgorithmInfo&)>;
+std::unique_ptr<GemmPlan> make_cublaslt(const Config&,const void*,const void*,void*,const void*,std::size_t,cudaStream_t, LtValidator validator = {});
 inline cudaDataType_t input_type(const Config& c) {
   return c.dtype==Dtype::FP16 ? CUDA_R_16F : c.dtype==Dtype::BF16 ? CUDA_R_16BF : CUDA_R_32F;
 }

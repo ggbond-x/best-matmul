@@ -25,18 +25,31 @@ auto make_operand_stride(int leading_dimension)
 template <GMMA::Major Major, class T, class Shape>
 auto make_operand_smem_layout(Shape const& shape)
 {
-  static_assert(Major == GMMA::Major::MN || Major == GMMA::Major::K);
+  static_assert(
+    Major == GMMA::Major::MN || 
+    Major == GMMA::Major::K);
+  
   if constexpr (Major == GMMA::Major::MN) {
     constexpr int mn = decltype(size<0>(Shape{}))::value;
+    
+    // 判断是否为 2 的整数次幂，经典的位运算判断方法
+    // mn & (mn - 1) = 0 表示 mn 是 2 的整数次幂
     if constexpr ((mn & (mn - 1)) != 0) {
-      // M=192 等非 2 次幂 tile：先铺 K，再铺 M/N，避免将 factor=3/5/7
+      // M/N 维度不是 2 的整数次幂时：先铺 K，再铺 M/N
       // 插进 swizzle 的连续地址模式。TMA 可按完整的 64 x K slab 分次搬运。
-      return tile_to_shape(GMMA::Layout_MN_SW128_Atom<T>{}, shape, Step<_2, _1, _3>{});
+      return tile_to_shape(
+        GMMA::Layout_MN_SW128_Atom<T>{}, 
+        shape, 
+        Step<_2, _1, _3>{});
     } else {
-      return tile_to_shape(GMMA::Layout_MN_SW128_Atom<T>{}, shape);
+      return tile_to_shape(
+        GMMA::Layout_MN_SW128_Atom<T>{}, 
+        shape);
     }
   } else {
-    return tile_to_shape(GMMA::Layout_K_SW128_Atom<T>{}, shape);
+    return tile_to_shape(
+      GMMA::Layout_K_SW128_Atom<T>{}, 
+      shape);
   }
 }
 

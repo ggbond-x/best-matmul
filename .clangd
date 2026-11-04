@@ -1,0 +1,2 @@
+CompileFlags:
+  Add: ["-x", "cuda", "--cuda-gpu-arch=sm_86"]
