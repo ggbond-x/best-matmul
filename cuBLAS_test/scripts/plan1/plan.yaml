@@ -39,7 +39,7 @@ layout_definitions:
     cublas_op_a: N
     cublas_op_b: T
     cutlass_a: ColumnMajor
-    cutlass_b: ColumnMajor
+    cutlass_b: RowMajor
   TN:
     a_storage: row_major(K-contiguous)
     b_storage: row_major(K-contiguous)
@@ -48,7 +48,7 @@ layout_definitions:
     cublas_op_a: T
     cublas_op_b: N
     cutlass_a: RowMajor
-    cutlass_b: RowMajor
+    cutlass_b: ColumnMajor
 
 shapes:
   - {id: S01, m: 4096, n: 4096, k: 4096, priority: P0}

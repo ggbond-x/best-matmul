@@ -76,6 +76,14 @@ class CutlassSm90Plan final : public GemmPlan {
   using StrideC = typename GemmKernel::StrideC;
   using StrideD = typename GemmKernel::StrideD;
 
+  // B 的 CuTe stride 依次对应 (N, K, batch)，与 A 的 (M, K, batch)
+  // 有相同的连续方向；CUTLASS 的 B 布局标签则按 GEMM 的 K×N 解释。
+  static_assert(
+      std::is_same_v<LayoutA, cutlass::layout::ColumnMajor>
+          ? std::is_same_v<StrideB, cute::Stride<cute::Int<1>, int64_t, int64_t>>
+          : std::is_same_v<StrideB, cute::Stride<int64_t, cute::Int<1>, int64_t>>,
+      "CUTLASS B stride must match the packed physical B(N,K) layout");
+
   static constexpr int kTileM = decltype(cute::size<0>(TileShape{}))::value;
   static constexpr int kTileN = decltype(cute::size<1>(TileShape{}))::value;
   static constexpr int kTileK = decltype(cute::size<2>(TileShape{}))::value;
@@ -181,8 +189,8 @@ class CutlassSm90Plan final : public GemmPlan {
                                                               : "ColumnMajor(M-contiguous)";
   }
   static char const* layout_b_name() {
-    return std::is_same_v<LayoutB, cutlass::layout::RowMajor> ? "RowMajor(K-contiguous)"
-                                                              : "ColumnMajor(N-contiguous)";
+    return std::is_same_v<LayoutB, cutlass::layout::RowMajor> ? "RowMajor(N-contiguous)"
+                                                              : "ColumnMajor(K-contiguous)";
   }
   std::string implementation_name(char const* suffix) const {
     return "CUTLASS_SM90_" + candidate_ + "_" + suffix;
@@ -198,12 +206,13 @@ class CutlassSm90Plan final : public GemmPlan {
   Gemm gemm_;
 };
 
-// NT: A/B 都按 M/N 连续；TN: A/B 都按 K 连续。
+// NT: A/B 分别按 M/N 连续；TN: A/B 都按 K 连续。
+// B 标签按 GEMM 的 K×N 定义，与物理 B(N×K) 的布局标签相反。
 template <class ElementAccumulator, class TileShape, class ClusterShape>
 std::unique_ptr<GemmPlan> make_nt(Options const& options, DeviceBuffers const& buffers,
                                   cudaStream_t stream, Accum accum, std::string const& candidate) {
   return std::make_unique<CutlassSm90Plan<cutlass::layout::ColumnMajor,
-                                          cutlass::layout::ColumnMajor, ElementAccumulator,
+                                          cutlass::layout::RowMajor, ElementAccumulator,
                                           TileShape, ClusterShape>>(
       options, buffers, stream, accum, candidate);
 }
@@ -212,7 +221,7 @@ template <class ElementAccumulator, class TileShape, class ClusterShape>
 std::unique_ptr<GemmPlan> make_tn(Options const& options, DeviceBuffers const& buffers,
                                   cudaStream_t stream, Accum accum, std::string const& candidate) {
   return std::make_unique<
-      CutlassSm90Plan<cutlass::layout::RowMajor, cutlass::layout::RowMajor, ElementAccumulator,
+      CutlassSm90Plan<cutlass::layout::RowMajor, cutlass::layout::ColumnMajor, ElementAccumulator,
                       TileShape, ClusterShape>>(options, buffers, stream, accum, candidate);
 }
 

@@ -55,10 +55,12 @@ A: M×K, B: N×K, C: M×N（列主序）
 C(m,n) = Σ_p A(m,p) * B(n,p),  alpha=1, beta=0
 ```
 
-| 布局 | A | B | lda/ldb | cuBLAS op | CUTLASS |
+| 布局 | A | B | lda/ldb | cuBLAS op | CUTLASS A / B |
 |---|---|---|---|---|---|
-| NT | `a[row + p*M]` | `b[col + p*N]` | `M / N` | `N, T` | ColumnMajor |
-| TN | `a[row*K + p]` | `b[col*K + p]` | `K / K` | `T, N` | RowMajor |
+| NT | `a[row + p*M]` | `b[col + p*N]` | `M / N` | `N, T` | ColumnMajor / RowMajor |
+| TN | `a[row*K + p]` | `b[col*K + p]` | `K / K` | `T, N` | RowMajor / ColumnMajor |
+
+CUTLASS 的 B 标签按 GEMM 的 K×N 矩阵定义；上表 B 地址描述的是物理 N×K 矩阵，因此两者的行/列主序标签相反。
 
 输入为固定 seed 的非平凡 FP16；同一运行内所有实现共享同一份逻辑 A/B，按布局物理打包后上传，打包与初始化不计时。
 
