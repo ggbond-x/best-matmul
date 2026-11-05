@@ -4,7 +4,7 @@
 
 ## Hopper 五版本对照实验
 
-运行支持计算能力 9.0 的 Hopper GPU，包括 H100、H800、H200 和 GH200；`run.sh` 按计算能力检查，不限制型号名称。编译目标仍为 `sm_90a`。默认 `build/h100_pcie`、`reports/h100_pcie` 及文档文件名为沿用名称，不代表设备限制；可用 `--build-dir` / `--output-dir` 或 `BUILD_DIR` / `EXP_DIR` 指定其他目录。
+运行支持计算能力 9.0 的 Hopper GPU，包括 H100、H800、H200 和 GH200；`run.sh` 按计算能力检查，不限制型号名称。编译目标仍为 `sm_90a`。plan1 默认构建目录为 `build/plan1/h100_pcie`；plan2 的构建目录在 `build/plan2/` 下。目录名称不代表设备限制；可用 `--build-dir` / `--output-dir` 或 `BUILD_DIR` / `EXP_DIR` 指定其他目录。
 
 若 H800 曾报“本测试面向 H100”，同步修复后的 `run.sh` 即可解除脚本限制，已有 `sm_90a` 二进制可继续使用。先在新结果目录重跑 `bash run.sh --mode validate --gpu 0`，通过后再运行计时或完整实验。GPU 型号和计算能力保存在 `run_metadata.txt`，比较峰值时使用实际设备的规格。
 

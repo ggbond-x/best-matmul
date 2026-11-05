@@ -1,0 +1,220 @@
+# plan1：H100 PCIe FP16 GEMM 公平基线对比
+# 该文件是可版本控制的测试计划；运行时的实际生效配置会快照到
+# output/plan1/<timestamped_run>/resolved_plan.yaml。
+plan_id: plan1
+name: H100 PCIe FP16 GEMM 公平基线对比
+target:
+  gpu: NVIDIA H100 PCIe
+  architecture: sm_90a
+  theoretical_dense_fp16_tflops: 756.0
+  peak_note: >-
+    756 TFLOPS 为 H100 PCIe 官方稠密 FP16（非稀疏）标称峰值，
+    仅用于理论利用率参考；实际持续吞吐取决于运行时钟、功耗与温度。
+purpose: >-
+  在同一张 H100 PCIe、相同数学语义与测量条件下，比较自研 TMA+WGMMA
+  V1/V2 与 cuBLAS、cuBLASLt、CUTLASS SM90 的 FP16 GEMM 性能，
+  定位差距并给出下一步优化方向。
+
+input:
+  dtype: FP16
+  output_dtype: FP16
+  alpha: 1.0
+  beta: 0.0
+  seed: 20261105
+  note: >-
+    非平凡输入（固定 seed，含正负与小数）；同一运行内所有实现共享同一
+    A/B；alpha=1、beta=0，不计初始化与 Host-Device 拷贝。
+
+layouts: [TN, NT]
+
+# 逻辑定义：C(m,n) = sum_k A(m,k) * B(n,k)，C 列主序。
+# NT：A/B 的 M/N 维连续（a[row + p*M], b[col + p*N]），lda=M, ldb=N；
+# TN：A/B 的 K 维连续（a[row*K + p], b[col*K + p]），lda=K, ldb=K。
+layout_definitions:
+  NT:
+    a_storage: column_major(M-contiguous)
+    b_storage: column_major(N-contiguous)
+    lda: M
+    ldb: N
+    cublas_op_a: N
+    cublas_op_b: T
+    cutlass_a: ColumnMajor
+    cutlass_b: ColumnMajor
+  TN:
+    a_storage: row_major(K-contiguous)
+    b_storage: row_major(K-contiguous)
+    lda: K
+    ldb: K
+    cublas_op_a: T
+    cublas_op_b: N
+    cutlass_a: RowMajor
+    cutlass_b: RowMajor
+
+shapes:
+  - {id: S01, m: 4096, n: 4096, k: 4096, priority: P0}
+  - {id: S02, m: 4096, n: 4096, k: 256, priority: P0}
+  - {id: S03, m: 4096, n: 4096, k: 1024, priority: P0}
+  - {id: S04, m: 4096, n: 4096, k: 2048, priority: P0}
+  - {id: S05, m: 2048, n: 2048, k: 2048, priority: P0}
+  - {id: S06, m: 8192, n: 8192, k: 8192, priority: P0}
+  - {id: S07, m: 1024, n: 1024, k: 1024, priority: P1}
+  - {id: S08, m: 4096, n: 4096, k: 512, priority: P1}
+  - {id: S09, m: 256, n: 4096, k: 4096, priority: P1}
+  - {id: S10, m: 4096, n: 256, k: 4096, priority: P1}
+  - {id: S11, m: 1024, n: 8192, k: 4096, priority: P1}
+  - {id: S12, m: 8192, n: 1024, k: 4096, priority: P1}
+
+implementations:
+  # 自研 Kernel 源码保持原样，仅通过适配层调用；不修改计算逻辑。
+  custom:
+    - CUSTOM_V1_F16ACC
+    - CUSTOM_V2_PIPE2_F16ACC
+    - CUSTOM_V2_PIPE3_F16ACC
+    - CUSTOM_V2_PIPE4_F16ACC
+  libraries:
+    - CUBLAS_EX_F16ACC
+    - CUBLAS_EX_F32ACC
+    - CUBLAS_LT_F16ACC
+    - CUBLAS_LT_F32ACC
+    - CUTLASS_SM90_128x128x64_C1x1x1_F16ACC
+    - CUTLASS_SM90_128x128x64_C1x1x1_F32ACC
+    - CUTLASS_SM90_128x256x64_C2x1x1_F16ACC
+    - CUTLASS_SM90_128x256x64_C2x1x1_F32ACC
+  # 排名严格按累加精度分组；自研 Kernel 使用 FP16 累加。
+  accumulation_groups:
+    FP16:
+      - CUSTOM_V1_F16ACC
+      - CUSTOM_V2_PIPE2_F16ACC
+      - CUSTOM_V2_PIPE3_F16ACC
+      - CUSTOM_V2_PIPE4_F16ACC
+      - CUBLAS_EX_F16ACC
+      - CUBLAS_LT_F16ACC
+      - CUTLASS_SM90_128x128x64_C1x1x1_F16ACC
+      - CUTLASS_SM90_128x256x64_C2x1x1_F16ACC
+    FP32:
+      - CUBLAS_EX_F32ACC
+      - CUBLAS_LT_F32ACC
+      - CUTLASS_SM90_128x128x64_C1x1x1_F32ACC
+      - CUTLASS_SM90_128x256x64_C2x1x1_F32ACC
+
+correctness:
+  # 先正确性、后性能；未通过或非有限的实现不进入排名。
+  reference: full_gpu_fp64
+  sampled_fallback: sampled_cpu_fp64
+  thresholds_fixed_before_run: true
+  thresholds:
+    FP16:
+      atol: "0.5 + 1e-4 * K"
+      rtol: 0.01
+      rel_l2_max: 0.01
+      mismatch_fraction_max: 0.0
+    FP32:
+      atol: 0.125
+      rtol: 0.002
+      rel_l2_max: 0.001
+      mismatch_fraction_max: 0.0
+  note: >-
+    阈值只随累加精度与 K 变化，不随实现变化。FP16 累加与 FP32 累加分开排名，
+    不直接比较绝对误差。
+
+timing:
+  # 主排行榜：warm-cache、GPU event、多轮独立测量、每轮轮换实现顺序。
+  mode: event
+  warm:
+    warmup: 20
+    inner: 100
+    samples: 5
+    rounds: 5
+    order: rotate
+  # 可选口径：单独成榜，不与 event 混排。
+  wall:
+    enabled: false
+    note: host_wall_including_launch，同步前后各一次 cudaDeviceSynchronize
+  graph:
+    enabled: false
+    note: CUDA Graph replay，单独成榜；capture 失败会回退并记录 notes
+  cold:
+    cases: [S01, S02]
+    cache_mode: cold
+    flush_mb: 256
+    inner: 1
+    note: >-
+      每个 sample 前用独立的 L2 冲刷 buffer 执行 cudaMemsetAsync；
+      冲刷不计入 kernel 时间，但保留在 run.log 与 raw_runs 的 cache_mode 中。
+
+cublaslt:
+  workspace_mb: 64
+  candidates: 32
+  selection: tune
+  note: >-
+    按 heuristic 结果枚举有限候选，逐个做合法性与正确性检查，
+    记录选中的算法 ID、workspace 与候选数量。
+
+ncu:
+  # NCU 只做诊断，不替代 benchmark；Duration 不与主排行榜混排。
+  cases: [S01, S02]
+  layouts: [TN, NT]
+  implementations:
+    - CUSTOM_V1_F16ACC
+    - CUSTOM_V2_PIPE3_F16ACC
+    - CUBLAS_EX_F32ACC
+    - CUTLASS_SM90_128x128x64_C1x1x1_F32ACC
+  sections:
+    - SpeedOfLight
+    - LaunchStats
+    - Occupancy
+    - SchedulerStats
+    - WarpStateStats
+    - MemoryWorkloadAnalysis
+  metrics: []
+  cache_control: all
+  replay_mode: kernel
+  clock_control: none
+  launch_skip: 1   # 二进制先做一次 warmup launch，NCU 跳过它
+  launch_count: 5
+
+clock_policy:
+  change_clocks: false
+  # 默认不修改设备时钟；只有用户在命令行显式指定时才允许锁定，并在退出时恢复。
+  allow_manual_lock: true
+  sm_clock_mhz: 0
+  mem_clock_mhz: 0
+  note: >-
+    plan1 默认 clock_locked=false，记录实际观测频率与波动，不宣称固定频率对比。
+    若手动锁频，必须保存 nvidia-smi -q -d CLOCK 前后快照并用 trap 恢复。
+
+monitoring:
+  interval_s: 0.5
+  nvidia_smi_fields:
+    - clocks.sm
+    - clocks.mem
+    - power.draw
+    - temperature.gpu
+    - utilization.gpu
+    - utilization.memory
+    - pstate
+    - clocks_throttle_reasons.active
+  detect_interfering_processes: true
+  kill_interfering_processes: false
+
+failures:
+  continue_on_case_failure: true
+  keep_partial_results: true
+
+# 入口选择。implementations 为 all 表示 custom + libraries 全量。
+modes:
+  quick:
+    cases: [S01, S02]
+    layouts: [TN, NT]
+    implementations: all
+    cold_cases: []
+  full:
+    cases: [S01, S02, S03, S04, S05, S06, S07, S08, S09, S10, S11, S12]
+    layouts: [TN, NT]
+    implementations: all
+    cold_cases: [S01, S02]
+  ncu:
+    cases: [S01, S02]
+    layouts: [TN, NT]
+    implementations: all
+    cold_cases: []

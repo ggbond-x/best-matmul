@@ -1,0 +1,25 @@
+# 构建产物
+build/
+Testing/
+*.o
+*.obj
+*.a
+*.so
+*.exe
+
+# Python 缓存
+__pycache__/
+*.pyc
+
+# 运行期临时文件（不忽略真实 CSV/JSON/分析，这些需要保留）
+*.tmp
+*.swp
+.DS_Store
+
+# Nsight Compute 原始报告可能很大；保留汇总 CSV 与分析，原始报告按项目需要决定是否提交。
+output/**/reports/*.ncu-rep
+output/**/reports/*.err
+output/**/.env_before.json
+
+# 可选的图片与临时输出不强制纳入版本库
+# output/**/figures/*.svg

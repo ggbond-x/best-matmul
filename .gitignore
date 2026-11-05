@@ -1,5 +1,6 @@
 build/
 reports/
+output/
 tmp/
 
 cuBLAS_test/build*/

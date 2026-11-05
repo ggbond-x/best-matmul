@@ -1,45 +1,51 @@
 #pragma once
+// 后端统一接口：构造时完成句柄/描述符/算法搜索，run() 只提交一次 GEMM。
+// 所有实现共享同一组 A/B/C 设备缓冲区，因此对比使用完全相同的输入。
 #include "gemm/config.hpp"
 #include "gemm/cuda_utils.hpp"
+
+#include <functional>
 #include <memory>
 #include <string>
 #include <vector>
-#include <functional>
+
 namespace gemm {
-struct AlgorithmTrial {
-  int index=-1;
-  std::string description, status;
-  std::size_t workspace=0;
-  double median_ms=0;
-};
-struct AlgorithmInfo {
-  std::string description="not_selected";
-  int heuristic_index=-1, candidates=0;
-  std::size_t workspace_used=0;
-  std::vector<AlgorithmTrial> trials;
-};
-// Constructors prepare handles, descriptors, workspace and selection.
-// run() only enqueues GEMM on the supplied stream. Both backends use C==D.
+
 class GemmPlan {
  public:
-  virtual ~GemmPlan()=default;
-  virtual void run()=0;
-  AlgorithmInfo info;
+  virtual ~GemmPlan() = default;
+  virtual void run() = 0;
+  PlanInfo info;
 };
-std::unique_ptr<GemmPlan> make_cublas(const Config&,const void*,const void*,void*,cudaStream_t);
-using LtValidator = std::function<bool(const AlgorithmInfo&)>;
-std::unique_ptr<GemmPlan> make_cublaslt(const Config&,const void*,const void*,void*,const void*,std::size_t,cudaStream_t, LtValidator validator = {});
-inline cudaDataType_t input_type(const Config& c) {
-  return c.dtype==Dtype::FP16 ? CUDA_R_16F : c.dtype==Dtype::BF16 ? CUDA_R_16BF : CUDA_R_32F;
-}
-inline cublasComputeType_t compute_type(const Config& c) {
-  return c.dtype==Dtype::FP32 ? CUBLAS_COMPUTE_32F_PEDANTIC : c.dtype==Dtype::TF32 ? CUBLAS_COMPUTE_32F_FAST_TF32 : CUBLAS_COMPUTE_32F;
-}
-inline cudaDataType_t output_type(const Config& c) { return output_name(c)=="FP32" ? CUDA_R_32F : input_type(c); }
-inline std::size_t type_size(cudaDataType_t t) { return t==CUDA_R_32F ? 4 : 2; }
-void upload(void* dst,std::vector<float>& data,cudaDataType_t type,cudaStream_t stream);
-std::vector<float> download(const void* src,std::size_t count,cudaDataType_t type,cudaStream_t stream);
-}
 
+// cuBLASLt 候选算法选择时的正确性回调：检查当前 C 缓冲区是否通过参考比较。
+using Validator = std::function<bool()>;
 
+struct BackendFactory {
+  std::string name;
+  Accum accum = Accum::FP32;
+  std::vector<std::string> layouts;  // 支持 "TN"/"NT"；空表示两者都支持
+  int min_cc_major = 0;
+  int min_cc_minor = 0;
+  std::function<std::unique_ptr<GemmPlan>(Options const&, DeviceBuffers const&,
+                                          cudaStream_t, Validator const&)> make;
+};
 
+std::vector<BackendFactory> const& backend_registry();
+BackendFactory const* find_backend(std::string const& name);
+
+// 以下工厂分布在 src/backends 与 src/custom 中。
+std::unique_ptr<GemmPlan> make_cublas_ex(Options const&, DeviceBuffers const&, cudaStream_t, Accum);
+std::unique_ptr<GemmPlan> make_cublas_lt(Options const&, DeviceBuffers const&, cudaStream_t,
+                                         Accum, Validator const&);
+
+std::unique_ptr<GemmPlan> make_custom_v1(Options const&, DeviceBuffers const&, cudaStream_t);
+std::unique_ptr<GemmPlan> make_custom_v2(Options const&, DeviceBuffers const&, cudaStream_t);
+std::unique_ptr<GemmPlan> make_custom_v2_p2(Options const&, DeviceBuffers const&, cudaStream_t);
+std::unique_ptr<GemmPlan> make_custom_v2_p4(Options const&, DeviceBuffers const&, cudaStream_t);
+
+// candidate 取值：T128x128x64_C1x1x1、T128x256x64_C2x1x1
+std::unique_ptr<GemmPlan> make_cutlass_candidate(Options const&, DeviceBuffers const&,
+                                                 cudaStream_t, Accum, std::string const& candidate);
+
+}  // namespace gemm

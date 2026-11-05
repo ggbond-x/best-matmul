@@ -1,3 +1,0 @@
-# Optional NVML and plotting dependencies; Python >=3.8
-nvidia-ml-py>=12,<14
-matplotlib>=3.5,<4

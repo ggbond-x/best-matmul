@@ -11,7 +11,7 @@ import tempfile
 import unittest
 
 
-RUN_SCRIPT = Path(__file__).resolve().parents[1] / "run.sh"
+RUN_SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "plan1" / "run.sh"
 
 
 class DeviceCompatibilityTests(unittest.TestCase):

@@ -1,67 +1,130 @@
 cmake_minimum_required(VERSION 3.16)
-project(cublas_gemm_benchmark VERSION 1.0 LANGUAGES CXX CUDA)
-if(CMAKE_CUDA_COMPILER_VERSION VERSION_LESS 11.0)
-  message(FATAL_ERROR "CUDA >= 11.0 required; select a newer CMAKE_CUDA_COMPILER")
-endif()
+project(gemm_bench_plan1 LANGUAGES CXX CUDA)
+
+# 统一构建：公共测试程序 + 库适配 + 自研 Kernel 适配。
+# 计划参数（Shape、实现选择、计时）不在 CMake 中，放在 scripts/planN/plan.yaml。
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CUDA17_STANDARD_COMPILE_OPTION "-std=c++17")
-set(CMAKE_CUDA17_EXTENSION_COMPILE_OPTION "-std=c++17")
-set(CMAKE_CUDA_STANDARD 17)
-set(CMAKE_CUDA_STANDARD_REQUIRED ON)
-set(GEMM_CUDA_ARCHITECTURES "80;90" CACHE STRING "Numeric SM targets supported by nvcc")
-set(CMAKE_CUDA_ARCHITECTURES OFF)
-get_filename_component(CUDA_BIN_DIR "${CMAKE_CUDA_COMPILER}" DIRECTORY)
-get_filename_component(CUDA_ROOT "${CUDA_BIN_DIR}" DIRECTORY)
-find_path(GEMM_CUDA_INCLUDE cuda_runtime.h HINTS ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES} "${CUDA_ROOT}/include" "${CUDA_ROOT}/targets/x86_64-linux/include" NO_DEFAULT_PATH)
-foreach(lib cudart cublas cublasLt)
-  find_library(GEMM_${lib}_LIBRARY NAMES ${lib} HINTS "${CUDA_ROOT}/lib64" "${CUDA_ROOT}/lib/x64" "${CUDA_ROOT}/targets/x86_64-linux/lib" NO_DEFAULT_PATH)
-  if(NOT GEMM_${lib}_LIBRARY)
-    message(FATAL_ERROR "Cannot find ${lib} in ${CUDA_ROOT}")
-  endif()
-endforeach()
-if(NOT GEMM_CUDA_INCLUDE)
-  message(FATAL_ERROR "Cannot find CUDA headers in ${CUDA_ROOT}")
-endif()
-add_executable(gemm_bench benchmark/main.cpp src/config.cpp src/cublas_gemm.cpp src/cublaslt_gemm.cpp src/data.cu)
-target_include_directories(gemm_bench PRIVATE include "${GEMM_CUDA_INCLUDE}")
-target_link_libraries(gemm_bench PRIVATE "${GEMM_cudart_LIBRARY}" "${GEMM_cublas_LIBRARY}" "${GEMM_cublasLt_LIBRARY}")
-foreach(arch IN LISTS GEMM_CUDA_ARCHITECTURES)
-  if(NOT arch MATCHES "^[0-9]+$")
-    message(FATAL_ERROR "GEMM_CUDA_ARCHITECTURES must contain numeric SMs")
-  endif()
-  target_compile_options(gemm_bench PRIVATE "$<$<COMPILE_LANGUAGE:CUDA>:-gencode=arch=compute_${arch},code=sm_${arch}>")
-endforeach()
-if(MSVC)
-  target_compile_options(gemm_bench PRIVATE "$<$<COMPILE_LANGUAGE:CXX>:/W4>")
+# CMake 3.16 尚不支持 CMAKE_CUDA_STANDARD=17，直接用 nvcc 的 -std=c++17。
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -std=c++17")
+
+set(GEMM_CUDA_ARCH "90a" CACHE STRING "CUDA arch for the benchmark (plan1 target: 90a)")
+
+# 兼容 CMake 3.16（无 CMAKE_CUDA_ARCHITECTURES）：直接生成单个 gencode，
+# 避免 nvcc 同时编译默认架构导致 SM90 代码无法通过。
+if(GEMM_CUDA_ARCH MATCHES "^(.*)a$")
+  set(_gemm_compute_arch "compute_${CMAKE_MATCH_1}a")
+  set(_gemm_code_arch "sm_${CMAKE_MATCH_1}a")
 else()
-  target_compile_options(gemm_bench PRIVATE "$<$<COMPILE_LANGUAGE:CXX>:-Wall;-Wextra;-Wpedantic>")
+  set(_gemm_compute_arch "compute_${GEMM_CUDA_ARCH}")
+  set(_gemm_code_arch "sm_${GEMM_CUDA_ARCH}")
 endif()
-enable_testing()
-add_test(NAME cli_help COMMAND gemm_bench --help)
-find_package(Python3 COMPONENTS Interpreter)
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -gencode arch=${_gemm_compute_arch},code=${_gemm_code_arch}")
 
-
-
-if(Python3_Interpreter_FOUND)
-  add_test(NAME compare_and_suite_tools COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_tools.py")
-  add_test(NAME cli_and_no_gpu COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/cli_checks.py" --exe $<TARGET_FILE:gemm_bench>)
-  option(GEMM_ENABLE_GPU_TESTS "Register the real GPU regression in CTest" OFF)
-  if(GEMM_ENABLE_GPU_TESTS)
-    add_test(NAME gpu_regression COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/gpu_smoke.py" --exe $<TARGET_FILE:gemm_bench>)
-    set_tests_properties(gpu_regression PROPERTIES SKIP_RETURN_CODE 3)
+# ---- CUTLASS -----------------------------------------------------------------
+set(CUTLASS_ROOT "" CACHE PATH "CUTLASS repository root (contains include/cutlass)")
+if(NOT CUTLASS_ROOT)
+  if(DEFINED ENV{CUTLASS_ROOT} AND EXISTS "$ENV{CUTLASS_ROOT}/include/cutlass/cutlass.h")
+    set(CUTLASS_ROOT "$ENV{CUTLASS_ROOT}")
+  else()
+    foreach(candidate
+        "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../../../cutlass"
+        "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../cutlass"
+        "${CMAKE_CURRENT_SOURCE_DIR}/../cutlass"
+        "/usr/local/cutlass")
+      if(EXISTS "${candidate}/include/cutlass/cutlass.h")
+        set(CUTLASS_ROOT "${candidate}")
+        break()
+      endif()
+    endforeach()
   endif()
 endif()
-
-# Independent peak/telemetry entry; the legacy CLI remains unchanged.
-add_executable(h800_peak_bench src/h800_peak.cu src/config.cpp src/cublas_gemm.cpp src/cublaslt_gemm.cpp)
-target_include_directories(h800_peak_bench PRIVATE include "${GEMM_CUDA_INCLUDE}")
-target_link_libraries(h800_peak_bench PRIVATE "${GEMM_cudart_LIBRARY}" "${GEMM_cublas_LIBRARY}" "${GEMM_cublasLt_LIBRARY}")
-foreach(arch IN LISTS GEMM_CUDA_ARCHITECTURES)
-  target_compile_options(h800_peak_bench PRIVATE "$<$<COMPILE_LANGUAGE:CUDA>:-gencode=arch=compute_${arch},code=sm_${arch}>")
-endforeach()
-target_compile_options(h800_peak_bench PRIVATE "$<$<COMPILE_LANGUAGE:CUDA>:-lineinfo>")
-
-if(Python3_Interpreter_FOUND)
-  add_test(NAME h800_peak_analysis COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_h800_peak.py")
+if(NOT CUTLASS_ROOT OR NOT EXISTS "${CUTLASS_ROOT}/include/cutlass/cutlass.h")
+  message(FATAL_ERROR
+    "找不到 CUTLASS。请设置 -DCUTLASS_ROOT=/path/to/cutlass 或环境变量 CUTLASS_ROOT。")
 endif()
+message(STATUS "CUTLASS_ROOT=${CUTLASS_ROOT}")
+
+# 与所选 nvcc 配套的 Toolkit 根目录（头文件/库/RPATH 都从这里取）。
+get_filename_component(_gemm_cuda_bin "${CMAKE_CUDA_COMPILER}" DIRECTORY)
+get_filename_component(_gemm_cuda_root "${_gemm_cuda_bin}" DIRECTORY)
+set(_gemm_cuda_lib "${_gemm_cuda_root}/lib64")
+message(STATUS "CUDA toolkit root=${_gemm_cuda_root}")
+
+# ---- targets -----------------------------------------------------------------
+set(GEMM_SOURCES
+  src/main.cpp
+  src/host_data.cpp
+  src/timing.cpp
+  src/csv.cpp
+  src/telemetry.cpp
+  src/backends/cublas_gemm.cpp
+  src/backends/cublaslt_gemm.cpp
+  src/backends/cutlass_gemm.cu
+  src/backends/registry.cpp
+  src/custom/custom_v1.cu
+  src/custom/custom_v2_p2.cu
+  src/custom/custom_v2_p3.cu
+  src/custom/custom_v2_p4.cu
+)
+
+add_executable(gemm_bench ${GEMM_SOURCES})
+
+target_include_directories(gemm_bench PRIVATE
+  "${_gemm_cuda_root}/include"              # 与所选 nvcc 配套的 cuBLAS/cuBLASLt 头文件
+  "${CMAKE_CURRENT_SOURCE_DIR}/include"
+  "${CMAKE_CURRENT_SOURCE_DIR}/.."          # kernels/ 与 host/ 的仓库相对路径
+  "${CMAKE_CURRENT_SOURCE_DIR}/../kernels"  # 自研 Kernel 头文件
+  "${CUTLASS_ROOT}/include"
+  "${CUTLASS_ROOT}/tools/util/include"      # CUTLASS 4.x 的 cutlass/util/*.hpp
+)
+
+target_compile_options(gemm_bench PRIVATE
+  $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>
+  $<$<COMPILE_LANGUAGE:CUDA>:-lineinfo>
+  $<$<COMPILE_LANGUAGE:CXX>:-Wall>
+  $<$<COMPILE_LANGUAGE:CXX>:-Wextra>
+)
+
+# Match the historical V1/V2 report configuration explicitly, not the shared
+# kernel header's independent default (GMMA_INST_N=64).
+target_compile_definitions(gemm_bench PRIVATE GMMA_INST_N=128)
+
+# 自研 V2 的 PIPE 深度是编译期常量；每个 TU 只编译一种配置，保留原始 Kernel 源码。
+set_source_files_properties(src/custom/custom_v2_p2.cu PROPERTIES
+  COMPILE_DEFINITIONS "PIPE=2;WGMMA_MAX_INFLIGHT=2")
+set_source_files_properties(src/custom/custom_v2_p3.cu PROPERTIES
+  COMPILE_DEFINITIONS "PIPE=3;WGMMA_MAX_INFLIGHT=2")
+set_source_files_properties(src/custom/custom_v2_p4.cu PROPERTIES
+  COMPILE_DEFINITIONS "PIPE=4;WGMMA_MAX_INFLIGHT=2")
+
+# cuBLAS/cuBLASLt 必须与使用的 nvcc 来自同一套 Toolkit；优先从编译器路径推导 lib64，
+# 避免在同时装有旧版系统 CUDA 的机器上误链接到旧 cuBLAS。
+find_library(CUBLAS_LIBRARY NAMES cublas HINTS "${_gemm_cuda_lib}" NO_DEFAULT_PATH)
+find_library(CUBLASLT_LIBRARY NAMES cublasLt HINTS "${_gemm_cuda_lib}" NO_DEFAULT_PATH)
+if(NOT CUBLAS_LIBRARY OR NOT CUBLASLT_LIBRARY)
+  find_library(CUBLAS_LIBRARY NAMES cublas)
+  find_library(CUBLASLT_LIBRARY NAMES cublasLt)
+endif()
+if(NOT CUBLAS_LIBRARY OR NOT CUBLASLT_LIBRARY)
+  message(FATAL_ERROR "找不到 cuBLAS/cuBLASLt 库；请确认 CUDA Toolkit 安装完整。")
+endif()
+message(STATUS "CUBLAS_LIBRARY=${CUBLAS_LIBRARY}")
+message(STATUS "CUBLASLT_LIBRARY=${CUBLASLT_LIBRARY}")
+target_link_libraries(gemm_bench PRIVATE
+  "${CUBLAS_LIBRARY}"
+  "${CUBLASLT_LIBRARY}"
+  ${CMAKE_DL_LIBS}
+)
+set_target_properties(gemm_bench PROPERTIES
+  BUILD_RPATH "${_gemm_cuda_lib}"
+  INSTALL_RPATH "${_gemm_cuda_lib}"
+)
+
+set_target_properties(gemm_bench PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
+)
+
+# 便于确认实际编译参数（写入 build/plan1/CMakeCache.txt 之外的单文件）。
+file(WRITE "${CMAKE_BINARY_DIR}/cuda_arch.txt" "${GEMM_CUDA_ARCH}\n")
